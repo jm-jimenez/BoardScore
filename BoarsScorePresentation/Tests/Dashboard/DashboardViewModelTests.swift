@@ -10,8 +10,16 @@ import Testing
 
 struct DashboardViewModelTests {
 
-    @Test func onAppear_textShouldBeCorrect() async throws {
+    @Test
+    func onAppear_TextShouldBeCorrect() async throws {
         let sut = DashboardViewModel()
         sut.onAppear()
+    }
+
+    @Test
+    func onDisappear_Something() async throws {
+        let sut = DashboardViewModel()
+        sut.onDisappear()
+        #expect(sut.disappearCalled)
     }
 }

@@ -37,10 +37,14 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
 #if DEBUG
 
 private class DashboardViewModelMock: DashboardViewModelProtocol {
-    let helloText: String = "mock"
-
+    var disappearCalled: Bool = false
+    
     func onAppear() {
 
+    }
+
+    func onDisappear() {
+        
     }
 }
 
