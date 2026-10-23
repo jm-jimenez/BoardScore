@@ -8,7 +8,7 @@
 import BoardScoreData
 
 public protocol GetSomethingUseCaseProtocol {
-
+    func testFunction() -> Bool
 }
 
 public struct DefaultGetSomethingUseCase {
@@ -22,5 +22,7 @@ public struct DefaultGetSomethingUseCase {
 }
 
 extension DefaultGetSomethingUseCase: GetSomethingUseCaseProtocol {
-
+    public func testFunction() -> Bool {
+        return true
+    }
 }

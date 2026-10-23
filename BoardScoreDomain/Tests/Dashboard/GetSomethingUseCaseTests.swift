@@ -14,6 +14,7 @@ struct GetSomethingUseCaseTests {
     @Test
     func doSomething() {
         let sut = DefaultGetSomethingUseCase(repository: repositoryMock)
-        #expect(true)
+        let result = sut.testFunction()
+        #expect(result)
     }
 }
