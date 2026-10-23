@@ -1,0 +1,31 @@
+name: Tests and coverage
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tests and coverage
+        run: python3 .scripts/ci_coverage.py --base origin/develop
+        env:
+          XCODE_WORKSPACE: BoardScore.xcworkspace
+          XCODE_SCHEME: BoardScore
+          XCODE_DESTINATION: platform=iOS Simulator,name=iPhone 17
+          MIN_COVERAGE: "90"
