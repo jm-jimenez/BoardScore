@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "67078B8D-3ED6-435D-8B4E-2C222C6E9CD4",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "random",
+    "testInteropMode" : "complete",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:BoarsScorePresentation",
+        "identifier" : "BoardScorePresentationTests",
+        "name" : "BoardScorePresentationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:BoardScoreData",
+        "identifier" : "BoardScoreDataTests",
+        "name" : "BoardScoreDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:BoardScoreDomain",
+        "identifier" : "BoardScoreDomainTests",
+        "name" : "BoardScoreDomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
