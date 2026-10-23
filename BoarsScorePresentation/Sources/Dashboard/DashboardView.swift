@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+private enum DashboardViewConstants {
+    static let chartPadding: CGFloat = 50
+}
+
 struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtocol {
 
     @ObservedObject
@@ -17,13 +21,16 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
     }
 
     var body: some View {
-        ChartView()
-            .background { Color.red }
-        Text(viewModel.helloText)
-            .onAppear {
-                viewModel.onAppear()
-            }
-        Spacer()
+        VStack {
+            ChartView()
+                .padding(.horizontal, DashboardViewConstants.chartPadding)
+            LastGamesView()
+            Spacer()
+        }
+        .background { Color(uiColor: .secondarySystemBackground)}
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 

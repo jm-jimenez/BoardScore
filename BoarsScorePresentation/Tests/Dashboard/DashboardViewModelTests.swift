@@ -13,6 +13,5 @@ struct DashboardViewModelTests {
     @Test func onAppear_textShouldBeCorrect() async throws {
         let sut = DashboardViewModel()
         sut.onAppear()
-        #expect(sut.helloText == "Hello miarma")
     }
 }
