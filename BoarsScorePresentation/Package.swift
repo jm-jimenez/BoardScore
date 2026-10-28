@@ -11,7 +11,7 @@ let package = Package(
         .library(
             name: "BoardScorePresentation",
             targets: ["BoardScorePresentation"]
-        ),
+        )
     ],
     dependencies: [
         .package(path: "../BoardScoreDomain"),
@@ -29,7 +29,9 @@ let package = Package(
         ),
         .testTarget(
             name: "BoardScorePresentationTests",
-            dependencies: ["BoardScorePresentation"]
+            dependencies: ["BoardScorePresentation",
+                           .product(name: "BoardScoreDomainMocks", package: "BoardScoreDomain")
+                          ]
         )
     ]
 )

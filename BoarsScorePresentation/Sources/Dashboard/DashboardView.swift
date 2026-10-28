@@ -21,15 +21,30 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
     }
 
     var body: some View {
+        ScrollView {
+            if case .content(let gamesViewData) = viewModel.state {
+                content(gamesViewData)
+            } else {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .background {
+            Color(uiColor: .secondarySystemBackground)
+                .ignoresSafeArea()
+        }
+        .onAppear {
+            viewModel.onAppear()
+        }
+    }
+
+    func content(_ contentViewData: DashboardViewModelState.ContentData) -> some View {
         VStack {
             ChartView()
                 .padding(.horizontal, DashboardViewConstants.chartPadding)
-            LastGamesView()
+            LastGamesView(viewData: contentViewData.gamesViewData)
+            TopWinnersView(viewData: contentViewData.winnersViewData)
             Spacer()
-        }
-        .background { Color(uiColor: .secondarySystemBackground)}
-        .onAppear {
-            viewModel.onAppear()
         }
     }
 }
@@ -37,13 +52,9 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
 #if DEBUG
 
 private class DashboardViewModelMock: DashboardViewModelProtocol {
-    var disappearCalled: Bool = false
-    
+    let state: DashboardViewModelState = .idle
+
     func onAppear() {
-
-    }
-
-    func onDisappear() {
         
     }
 }

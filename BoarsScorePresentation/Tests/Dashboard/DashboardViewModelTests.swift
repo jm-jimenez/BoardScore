@@ -5,21 +5,78 @@
 //  Created by José María Jiménez on 18/10/2026.
 //
 
+import Foundation
 import Testing
+import BoardScoreDomainMocks
 @testable import BoardScorePresentation
 
+@MainActor
 struct DashboardViewModelTests {
 
-    @Test
-    func onAppear_TextShouldBeCorrect() async throws {
-        let sut = DashboardViewModel()
-        sut.onAppear()
+    let sut: DashboardViewModel
+    var useCase: GetLastGamesUseCaseMock
+
+    init() {
+        self.useCase = GetLastGamesUseCaseMock()
+        self.sut = DashboardViewModel(getLastGamesUseCase: useCase)
     }
 
     @Test
-    func onDisappear_Something() async throws {
-        let sut = DashboardViewModel()
-        sut.onDisappear()
-        #expect(sut.disappearCalled)
+    func onAppear_WhenCalled_StateShouldBeCorrect() async throws {
+        await useCase.setExecutionReturn {
+            [.mock()]
+        }
+        sut.onAppear()
+        try await until {
+            if case .content = sut.state {
+                return true
+            } else {
+                return false
+            }
+        }
+        guard case .content(let contentData) = sut.state else {
+            fatalError("")
+        }
+        let count = await useCase.calledCount
+        let resultCount = contentData.gamesViewData.items.count
+        #expect(count == 1)
+        #expect(resultCount == 1)
+    }
+
+    @Test
+    func onAppear_WhenUseCasesThrow_ThenStateShouldBeError() async throws {
+        struct TestError: Error {}
+        await useCase.setExecutionReturn {
+            throw TestError()
+        }
+        sut.onAppear()
+        try await until {
+            if case .error = sut.state {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+}
+
+
+func until(condition: @escaping () -> Bool,
+           isolation _: isolated (any Actor?) = #isolation,
+           _ file: String = #file,
+           _ line: Int = #line,
+           _ sourceLocation: SourceLocation = #_sourceLocation
+) async throws {
+    enum TestError: Error {
+        case timedOut
+    }
+
+    let date = Date().advanced(by: 5)
+    while !condition() {
+        if Date() > date {
+            Issue.record(TestError.timedOut, sourceLocation: sourceLocation)
+            throw TestError.timedOut
+        }
+        try await Task.sleep(nanoseconds: 500_000_000)
     }
 }
