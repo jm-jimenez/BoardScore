@@ -77,6 +77,6 @@ func until(condition: @escaping () -> Bool,
             Issue.record(TestError.timedOut, sourceLocation: sourceLocation)
             throw TestError.timedOut
         }
-        try await Task.sleep(nanoseconds: 500_000_000)
+        await Task.yield()
     }
 }

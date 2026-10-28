@@ -2,6 +2,7 @@ name: Tests
 
 on:
   pull_request:
+    branches: [develop]
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
@@ -13,11 +14,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Run tests
         run: |
-          xcodebuild test \
+          rm -rf TestResults.xcresult
+          set -o pipefail && xcodebuild test \
             -scheme "BoardScore" \
             -workspace "BoardScore.xcworkspace" \
-            -destination 'platform=iOS Simulator,name=iPhone 11'
+            -destination 'platform=iOS Simulator,name=iPhone 11' \
+            -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult | xcbeautify
+
+      - name: Check results and coverage
+        if: always()
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: python3 .github/scripts/check_coverage.py --xcresult TestResults.xcresult --config .github/coverage.json

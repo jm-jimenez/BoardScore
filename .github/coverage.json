@@ -1,0 +1,11 @@
+{
+  "base_branch": "develop",
+  "default_threshold": 90,
+  "exclude": [
+    "*View.swift",
+    "*Mock*",
+    "*Tests/*",
+    "*/Preview Content/*",
+    "*BoardScoreApp.swift"
+  ]
+}
