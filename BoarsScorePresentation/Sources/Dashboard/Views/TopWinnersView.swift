@@ -12,10 +12,10 @@ struct TopWinnersView: View {
         static let cornerRadius: CGFloat = 16
     }
 
-    struct ViewData {
+    struct ViewData: Equatable {
         let items: [WinnerSummary]
 
-        struct WinnerSummary {
+        struct WinnerSummary: Equatable {
             let name: String
             let lastGame: String
             let winsLoses: String

@@ -12,17 +12,17 @@ public actor GetLastGamesUseCaseMock: GetLastGamesUseCaseProtocol {
     public init() {}
 
     public var calledCount = 0
-    public var executionReturn: (@Sendable () throws -> [Domain.GetLastGamesModel])?
+    public var executionReturn: (@Sendable () async throws -> [Domain.GetLastGamesModel])?
 
     public func callAsFunction() async throws -> [Domain.GetLastGamesModel] {
         calledCount += 1
         guard let executionReturn else {
             return []
         }
-        return try executionReturn()
+        return try await executionReturn()
     }
 
-    public func setExecutionReturn(_ newValue: @Sendable @escaping () throws -> [Domain.GetLastGamesModel]) {
+    public func setExecutionReturn(_ newValue: @Sendable @escaping () async throws -> [Domain.GetLastGamesModel]) {
         executionReturn = newValue
     }
 }

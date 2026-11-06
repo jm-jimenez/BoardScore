@@ -13,13 +13,20 @@ protocol DashboardViewModelProtocol: ObservableObject {
     func onAppear()
 }
 
-enum DashboardViewModelState {
+enum DashboardViewModelState: Equatable {
     case idle
     case loading
     case content(contentData: ContentData)
     case error
 
-    struct ContentData {
+    var isContent: Bool {
+        switch self {
+        case .content: return true
+        default: return false
+        }
+    }
+
+    struct ContentData: Equatable {
         let gamesViewData: LastGamesView.ViewData
         let winnersViewData: TopWinnersView.ViewData
     }
@@ -53,7 +60,8 @@ class DashboardViewModel {
 
 extension DashboardViewModel: DashboardViewModelProtocol {
     func onAppear() {
-        onAppearTask?.cancel()
+        guard onAppearTask == nil else { return }
+        
         onAppearTask = Task { [weak self] in
             self?.state = .loading
             async let lastGamesResult = self?.getLastGamesUseCase()

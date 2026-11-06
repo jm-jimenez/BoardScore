@@ -10,6 +10,10 @@ let package = Package(
         .library(
             name: "BoardScoreData",
             targets: ["BoardScoreData"]
+        ),
+        .library(
+            name: "BoardScoreDataMocks",
+            targets: ["BoardScoreDataMocks"]
         )
     ],
     targets: [
@@ -20,6 +24,11 @@ let package = Package(
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
+        ),
+        .target(
+            name: "BoardScoreDataMocks",
+            dependencies: ["BoardScoreData"],
+            path: "Mocks"
         ),
         .testTarget(
             name: "BoardScoreDataTests",
