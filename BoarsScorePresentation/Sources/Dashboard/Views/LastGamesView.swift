@@ -13,10 +13,10 @@ struct LastGamesView: View {
         static let cornerRadius: CGFloat = 16
     }
 
-    struct ViewData {
+    struct ViewData: Equatable {
         let items: [LastGame]
 
-        struct LastGame {
+        struct LastGame: Equatable {
             let name: String
             let winner: String
             let date: String
@@ -30,11 +30,6 @@ struct LastGamesView: View {
     }
 
     private let viewData: ViewData
-
-    // FIXME: remove
-    init() {
-        self.viewData = .mock
-    }
 
     init(viewData: ViewData) {
         self.viewData = viewData
@@ -54,35 +49,24 @@ struct LastGamesView: View {
     }
 
     var header: some View {
-        VStack {
-            Text("Last games")
-                .font(.title)
-                .fontWeight(.bold)
-
-            HStack {
-                Spacer()
-                Text("Winner")
-                    .foregroundStyle(Color.secondary)
-            }
-        }
+        SectionHeaderView(
+            viewData: SectionHeaderView.ViewData(
+                title: "Last games",
+                info: "Winner")
+        )
     }
 
     var games: some View {
         VStack {
             ForEach(viewData.items.enumerated(), id: \.offset) { index, game in
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(game.name)
-                            .font(.body)
-                        Text(game.date)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Text(game.winner)
-                        .font(.callout)
-                        .foregroundStyle(Color.accentColor)
-                }
+
+                SectionItemView(
+                    viewData: SectionItemView.ViewData(
+                        description: game.name,
+                        info: game.date,
+                        value: game.winner
+                    )
+                )
 
                 if index < viewData.items.count - 1 {
                     Divider()
@@ -113,7 +97,7 @@ private extension LastGamesView.ViewData {
 }
 
 #Preview {
-    LastGamesView()
+    LastGamesView(viewData: .mock)
         .background { Color(uiColor: .secondarySystemBackground) }
 }
 
