@@ -6,15 +6,29 @@
 //
 
 import Testing
+import BoardScoreData
+import BoardScoreDataMocks
+import BoardScoreDomainMocks
 @testable import BoardScoreDomain
 
 struct GetLastGamesUseCaseTests {
-    let sut = GetLastGamesUseCase()
+    let sut: GetLastGamesUseCase
+    let repository: DashboardRepositoryProtocol
+    let mapper: GetLastGamesMapperProtocol
+
+    init() {
+        repository = DashboardRepositoryMock()
+        mapper = GetLastGamesMapperMock()
+        sut = GetLastGamesUseCase(
+            repository: repository,
+            mapper: mapper
+        )
+    }
 
     @Test
     func whenCalled_ResultMustBeCorrect() async throws {
         let result = try await sut()
-        #expect(result.count == 2)
+        #expect(result.count == 0)
     }
 
 }

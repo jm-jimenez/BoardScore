@@ -28,11 +28,7 @@ struct DashboardViewModelTests {
         }
         sut.onAppear()
         try await until {
-            if case .content = sut.state {
-                return true
-            } else {
-                return false
-            }
+            sut.state.isContent
         }
         guard case .content(let contentData) = sut.state else {
             fatalError("")
@@ -58,10 +54,27 @@ struct DashboardViewModelTests {
             }
         }
     }
+
+    @Test
+    func onAppear_MultipleCalls_ShouldNotIncrementCount() async throws {
+        await useCase.setExecutionReturn {
+            try await Task.sleep(nanoseconds: 3_000_000)
+            return [.mock()]
+        }
+        sut.onAppear()
+        sut.onAppear()
+        sut.onAppear()
+        try await until {
+            sut.state.isContent
+        }
+        let calledCount = await useCase.calledCount
+        #expect(calledCount == 1)
+    }
 }
 
 
 func until(condition: @escaping () -> Bool,
+           timeout: Double = 5,
            isolation _: isolated (any Actor?) = #isolation,
            _ file: String = #file,
            _ line: Int = #line,
@@ -71,7 +84,7 @@ func until(condition: @escaping () -> Bool,
         case timedOut
     }
 
-    let date = Date().advanced(by: 5)
+    let date = Date().advanced(by: timeout)
     while !condition() {
         if Date() > date {
             Issue.record(TestError.timedOut, sourceLocation: sourceLocation)

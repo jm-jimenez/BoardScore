@@ -32,11 +32,15 @@ let package = Package(
         .target(
             name: "BoardScoreDomainMocks",
             dependencies: ["BoardScoreDomain"],
-            path: "Sources/BoardScoreDomainMocks"
+            path: "Mocks/"
         ),
         .testTarget(
             name: "BoardScoreDomainTests",
-            dependencies: ["BoardScoreDomain"]
+            dependencies: [
+                "BoardScoreDomain",
+                "BoardScoreDomainMocks",
+                .product(name: "BoardScoreDataMocks", package: "BoardScoreData")
+            ]
         )
     ]
 )

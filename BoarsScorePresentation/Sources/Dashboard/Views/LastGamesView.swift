@@ -13,10 +13,10 @@ struct LastGamesView: View {
         static let cornerRadius: CGFloat = 16
     }
 
-    struct ViewData {
+    struct ViewData: Equatable {
         let items: [LastGame]
 
-        struct LastGame {
+        struct LastGame: Equatable {
             let name: String
             let winner: String
             let date: String

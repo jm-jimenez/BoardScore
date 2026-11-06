@@ -14,39 +14,35 @@ public protocol GetLastGamesUseCaseProtocol: Sendable {
 
 public struct GetLastGamesUseCase {
     private let repository: DashboardRepositoryProtocol
+    private let mapper: GetLastGamesMapperProtocol
+
+    public init() {
+        repository = DefaultDashboardRepository()
+        mapper = GetLastGamesMapper()
+    }
 
     public init(
-        repository: DashboardRepositoryProtocol = DefaultDashboardRepository()
+        repository: DashboardRepositoryProtocol,
+        mapper: GetLastGamesMapperProtocol
     ) {
         self.repository = repository
+        self.mapper = mapper
     }
 }
 
 extension GetLastGamesUseCase: GetLastGamesUseCaseProtocol {
     public func callAsFunction() async throws -> [Domain.GetLastGamesModel] {
-        [
-            .init(name: "Dominion",
-                  winner: "Dani",
-                  date: Date()
-                 ),
-            .init(name: "Wingspan",
-                  winner: "Mercedes",
-                  date: Date())
-        ]
-    }
-}
-
-public extension Domain {
-    struct GetLastGamesModel: Sendable {
-        public let name: String
-        public let winner: String
-        public let date: Date
-
-        public init(name: String, winner: String, date: Date) {
-            self.name = name
-            self.winner = winner
-            self.date = date
-        }
+        let lastGames = try await repository.getLastGames()
+        return mapper.map(lastGames)
+//        [
+//            .init(name: "Dominion",
+//                  winner: "Dani",
+//                  date: Date()
+//                 ),
+//            .init(name: "Wingspan",
+//                  winner: "Mercedes",
+//                  date: Date())
+//        ]
     }
 }
 
