@@ -21,11 +21,11 @@ extension GetTopWinnersUseCase: GetTopWinnersUseCaseProtocol {
             .init(name: "Mercedes",
                   lastGameWin: "Wingspan",
                   wins: 13,
-                  loses: 6),
+                  losses: 6),
             .init(name: "M@rio",
                   lastGameWin: "Alquimistas",
                   wins: 8,
-                  loses: 3)
+                  losses: 3)
         ]
     }
 }
@@ -35,6 +35,6 @@ public extension Domain {
         public let name: String
         public let lastGameWin: String
         public let wins: Int
-        public let loses: Int
+        public let losses: Int
     }
 }

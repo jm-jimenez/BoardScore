@@ -1,6 +1,6 @@
 //
 //  DashboardViewModel.swift
-//  BoarsScorePresentation
+//  BoardScorePresentation
 //
 //  Created by José María Jiménez on 18/10/2026.
 //
@@ -63,32 +63,33 @@ extension DashboardViewModel: DashboardViewModelProtocol {
         guard onAppearTask == nil else { return }
         
         onAppearTask = Task { [weak self] in
-            self?.state = .loading
-            async let lastGamesResult = self?.getLastGamesUseCase()
-            async let topWinnersResult = self?.getTopWinnersUseCase()
-            do {
-                let (games, winners) = try await (lastGamesResult, topWinnersResult)
-                guard !Task.isCancelled,
-                      let self else { return }
-                let gamesViewData = self.handleGames(games)
-                let winnersViewData = self.handleWinners(winners)
-
-                self.state = .content(
-                    contentData: DashboardViewModelState.ContentData(
-                        gamesViewData: gamesViewData,
-                        winnersViewData: winnersViewData
-                    )
-                )
-
-                onAppearTask = nil
-            } catch {
-                self?.state = .error
-            }
+            await self?.load()
         }
     }
 }
 
 private extension DashboardViewModel {
+    func load() async {
+        defer { onAppearTask = nil }
+        state = .loading
+        let getLastGamesUseCase = getLastGamesUseCase
+        let getTopWinnersUseCase = getTopWinnersUseCase
+        async let lastGamesResult = getLastGamesUseCase()
+        async let topWinnersResult = getTopWinnersUseCase()
+        do {
+            let (games, winners) = try await (lastGamesResult, topWinnersResult)
+            guard !Task.isCancelled else { return }
+            state = .content(
+                contentData: DashboardViewModelState.ContentData(
+                    gamesViewData: handleGames(games),
+                    winnersViewData: handleWinners(winners)
+                )
+            )
+        } catch {
+            state = .error
+        }
+    }
+
     func handleGames(_ games: [Domain.GetLastGamesModel]?) -> LastGamesView.ViewData {
         lastGamesMapper.map(games)
     }

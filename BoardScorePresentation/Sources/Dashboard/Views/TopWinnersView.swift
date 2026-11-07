@@ -8,17 +8,13 @@
 import SwiftUI
 
 struct TopWinnersView: View {
-    private enum C {
-        static let cornerRadius: CGFloat = 16
-    }
-
     struct ViewData: Equatable {
         let items: [WinnerSummary]
 
         struct WinnerSummary: Equatable {
             let name: String
             let lastGame: String
-            let winsLoses: String
+            let winsLosses: String
         }
     }
 
@@ -29,34 +25,31 @@ struct TopWinnersView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             header
             Divider()
             winners
         }
-        .padding()
-        .background { Color.white }
-        .cornerRadius(C.cornerRadius)
-        .padding()
+        .dashboardCard()
     }
 
     var header: some View {
         SectionHeaderView(
             viewData: SectionHeaderView.ViewData(
                 title: "Top winners",
-                info: "Wins / loses"
+                info: "Wins / losses"
             )
         )
     }
 
     var winners: some View {
-        VStack {
+        VStack(spacing: 12) {
             ForEach(viewData.items.enumerated(), id: \.offset) { index, item in
                 SectionItemView(
                     viewData: SectionItemView.ViewData(
                         description: item.name,
                         info: item.lastGame,
-                        value: item.winsLoses))
+                        value: item.winsLosses))
 
                 if index < viewData.items.count - 1 {
                     Divider()
@@ -74,12 +67,12 @@ private extension TopWinnersView.ViewData {
             WinnerSummary(
                 name: "Mercedes",
                 lastGame: "Wingspan",
-                winsLoses: "13 / 6"
+                winsLosses: "13 / 6"
             ),
             WinnerSummary(
                 name: "M@rio",
                 lastGame: "Alquimistas",
-                winsLoses: "8 / 3"
+                winsLosses: "8 / 3"
             )
         ])
     }
@@ -87,6 +80,8 @@ private extension TopWinnersView.ViewData {
 
 #Preview {
     TopWinnersView(viewData: .mock)
+        .padding()
+        .background { Color(uiColor: .systemGroupedBackground) }
 }
 
 #endif

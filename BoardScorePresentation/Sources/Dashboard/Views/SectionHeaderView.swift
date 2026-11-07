@@ -21,16 +21,14 @@ struct SectionHeaderView: View {
     }
 
     var body: some View {
-        VStack {
+        HStack(alignment: .firstTextBaseline) {
             Text(viewData.title)
-                .font(.title)
-                .fontWeight(.bold)
-
-            HStack {
-                Spacer()
-                Text(viewData.info)
-                    .foregroundStyle(Color.secondary)
-            }
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            Text(viewData.info)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
     }
 }

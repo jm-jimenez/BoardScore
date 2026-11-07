@@ -9,10 +9,6 @@ import SwiftUI
 
 struct LastGamesView: View {
 
-    private enum C {
-        static let cornerRadius: CGFloat = 16
-    }
-
     struct ViewData: Equatable {
         let items: [LastGame]
 
@@ -36,16 +32,12 @@ struct LastGamesView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             header
             Divider()
             games
         }
-        .padding()
-        .background { Color.white }
-        .cornerRadius(C.cornerRadius)
-        .padding()
-
+        .dashboardCard()
     }
 
     var header: some View {
@@ -57,9 +49,8 @@ struct LastGamesView: View {
     }
 
     var games: some View {
-        VStack {
+        VStack(spacing: 12) {
             ForEach(viewData.items.enumerated(), id: \.offset) { index, game in
-
                 SectionItemView(
                     viewData: SectionItemView.ViewData(
                         description: game.name,
@@ -98,7 +89,8 @@ private extension LastGamesView.ViewData {
 
 #Preview {
     LastGamesView(viewData: .mock)
-        .background { Color(uiColor: .secondarySystemBackground) }
+        .padding()
+        .background { Color(uiColor: .systemGroupedBackground) }
 }
 
 #endif

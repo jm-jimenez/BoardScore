@@ -5,7 +5,7 @@
       location = "group:BoardScore.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:BoarsScorePresentation">
+      location = "group:BoardScorePresentation">
    </FileRef>
    <FileRef
       location = "group:BoardScoreDomain">
