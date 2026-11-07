@@ -11,6 +11,10 @@ let package = Package(
             name: "BoardScoreDomain",
             targets: ["BoardScoreDomain"]
         ),
+        .library(
+            name: "BoardScoreDomainMocks",
+            targets: ["BoardScoreDomainMocks"]
+        )
     ],
     dependencies: [
         .package(path: "../BoardScoreData")
@@ -21,13 +25,23 @@ let package = Package(
         .target(
             name: "BoardScoreDomain",
             dependencies: ["BoardScoreData"],
+            path: "Sources",
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
+        .target(
+            name: "BoardScoreDomainMocks",
+            dependencies: ["BoardScoreDomain"],
+            path: "Mocks"
+        ),
         .testTarget(
             name: "BoardScoreDomainTests",
-            dependencies: ["BoardScoreDomain"]
+            dependencies: [
+                "BoardScoreDomain",
+                "BoardScoreDomainMocks",
+                .product(name: "BoardScoreDataMocks", package: "BoardScoreData")
+            ]
         )
     ]
 )

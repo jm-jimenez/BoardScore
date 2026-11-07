@@ -10,9 +10,15 @@ import Testing
 
 struct DashboardRepositoryTests {
 
+    let sut: DefaultDashboardRepository
+
+    init() {
+        sut = DefaultDashboardRepository()
+    }
+
     @Test
-    func testInit() {
-        let sut = DefaultDashboardRepository()
-        #expect(sut != nil)
+    func getLastGames_ShouldCountTwo() async throws {
+        let result = try await sut.getLastGames()
+        #expect(result.count == 2)
     }
 }
