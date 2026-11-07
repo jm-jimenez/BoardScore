@@ -20,7 +20,7 @@ struct TopWinnersMapper: TopWinnersMapperProtocol {
             TopWinnersView.ViewData.WinnerSummary(
                 name: $0.name,
                 lastGame: $0.lastGameWin,
-                winsLoses: "\($0.wins) / \($0.loses)")
+                winsLosses: "\($0.wins) / \($0.losses)")
         }
 
         return TopWinnersView.ViewData(items: items)

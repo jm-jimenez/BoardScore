@@ -18,8 +18,8 @@ struct ChartView: View {
         Chartz(viewData:
                 Chartz.ViewData(
                     items: data.map { Double($0.value) },
-                    spacing: 0,
-                    innerRadius: Space.none
+                    spacing: 2,
+                    innerRadius: .ratio(0.6)
                 )
         )
     }

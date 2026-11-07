@@ -6,6 +6,7 @@
     "*Mock*",
     "*Tests/*",
     "*/Preview Content/*",
-    "*BoardScoreApp.swift"
+    "*BoardScoreApp.swift",
+    "*Modifier.swift"
   ]
 }

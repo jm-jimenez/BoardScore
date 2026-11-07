@@ -26,14 +26,15 @@ struct SectionItemView: View {
                 Text(viewData.description)
                     .font(.body)
                 Text(viewData.info)
-                    .font(.footnote)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             Text(viewData.value)
-                .font(.callout)
-                .foregroundStyle(Color.accentColor)
+                .font(.body)
+                .foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
