@@ -46,10 +46,10 @@ class DashboardViewModel {
     var state: DashboardViewModelState = .idle
 
     init(
-        getLastGamesUseCase: GetLastGamesUseCaseProtocol = GetLastGamesUseCase(),
-        getTopWinnersUseCase: GetTopWinnersUseCaseProtocol = GetTopWinnersUseCase(),
-        lastGamesMapper: LastGamesMapperProtocol = LastGamesMapper(),
-        topWinnersMapper: TopWinnersMapperProtocol = TopWinnersMapper()
+        getLastGamesUseCase: GetLastGamesUseCaseProtocol,
+        getTopWinnersUseCase: GetTopWinnersUseCaseProtocol,
+        lastGamesMapper: LastGamesMapperProtocol,
+        topWinnersMapper: TopWinnersMapperProtocol
     ) {
         self.getLastGamesUseCase = getLastGamesUseCase
         self.getTopWinnersUseCase = getTopWinnersUseCase

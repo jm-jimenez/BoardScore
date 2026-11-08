@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import BoardScoreData
 
 public protocol GetLastGamesUseCaseProtocol: Sendable {
     func callAsFunction() async throws -> [Domain.GetLastGamesModel]
@@ -14,26 +13,17 @@ public protocol GetLastGamesUseCaseProtocol: Sendable {
 
 public struct GetLastGamesUseCase {
     private let repository: DashboardRepositoryProtocol
-    private let mapper: GetLastGamesMapperProtocol
-
-    public init() {
-        repository = DefaultDashboardRepository()
-        mapper = GetLastGamesMapper()
-    }
 
     public init(
-        repository: DashboardRepositoryProtocol,
-        mapper: GetLastGamesMapperProtocol
+        repository: DashboardRepositoryProtocol
     ) {
         self.repository = repository
-        self.mapper = mapper
     }
 }
 
 extension GetLastGamesUseCase: GetLastGamesUseCaseProtocol {
     public func callAsFunction() async throws -> [Domain.GetLastGamesModel] {
-        let lastGames = try await repository.getLastGames()
-        return mapper.map(lastGames)
+        try await repository.getLastGames()
     }
 }
 

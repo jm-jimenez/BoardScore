@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A00F0B330A10E96008B3124 /* BoardScoreData in Frameworks */ = {isa = PBXBuildFile; productRef = 1A00F0B230A10E96008B3124 /* BoardScoreData */; };
+		1A00F0B530A1147A008B3124 /* BoardScoreDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 1A00F0B430A1147A008B3124 /* BoardScoreDomain */; };
 		1A98FC643084CA8E00C6BAF7 /* BoardScorePresentation in Frameworks */ = {isa = PBXBuildFile; productRef = 1A98FC633084CA8E00C6BAF7 /* BoardScorePresentation */; };
 		1A98FC6A308510B100C6BAF7 /* TestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 1A98FC69308510B100C6BAF7 /* TestPlan.xctestplan */; };
 /* End PBXBuildFile section */
@@ -28,7 +30,9 @@
 		000000000000000130000000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				1A00F0B330A10E96008B3124 /* BoardScoreData in Frameworks */,
 				1A98FC643084CA8E00C6BAF7 /* BoardScorePresentation in Frameworks */,
+				1A00F0B530A1147A008B3124 /* BoardScoreDomain in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -78,6 +82,8 @@
 			name = BoardScore;
 			packageProductDependencies = (
 				1A98FC633084CA8E00C6BAF7 /* BoardScorePresentation */,
+				1A00F0B230A10E96008B3124 /* BoardScoreData */,
+				1A00F0B430A1147A008B3124 /* BoardScoreDomain */,
 			);
 			productName = MyApp;
 			productReference = 000000000000000000000120 /* BoardScore.app */;
@@ -486,6 +492,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1A00F0B230A10E96008B3124 /* BoardScoreData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BoardScoreData;
+		};
+		1A00F0B430A1147A008B3124 /* BoardScoreDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BoardScoreDomain;
+		};
 		1A98FC633084CA8E00C6BAF7 /* BoardScorePresentation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BoardScorePresentation;
