@@ -5,12 +5,12 @@
 //  Created by José María Jiménez on 23/10/2026.
 //
 
-import BoardScoreData
+import BoardScoreDomain
 
 public struct DashboardRepositoryMock: DashboardRepositoryProtocol {
     public init() {}
     
-    public func getLastGames() async throws -> [Data.GetLastGamesModel] {
+    public func getLastGames() async throws -> [Domain.GetLastGamesModel] {
         return []
     }
 }

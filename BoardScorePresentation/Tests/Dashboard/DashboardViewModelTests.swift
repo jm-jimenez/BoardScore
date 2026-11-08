@@ -18,7 +18,13 @@ struct DashboardViewModelTests {
 
     init() {
         self.useCase = GetLastGamesUseCaseMock()
-        self.sut = DashboardViewModel(getLastGamesUseCase: useCase)
+        let dependencies = DashboardFactory.Dependency(external: DashboardExternalDependenciesTest())
+        self.sut = DashboardViewModel(
+            getLastGamesUseCase: useCase,
+            getTopWinnersUseCase: dependencies.resolve(),
+            lastGamesMapper: dependencies.resolve(),
+            topWinnersMapper: dependencies.resolve()
+        )
     }
 
     @Test

@@ -7,9 +7,10 @@
 
 import Foundation
 import Testing
-import BoardScoreData
+import BoardScoreDomain
+import BoardScoreDataMocks
 
-@testable import BoardScoreDomain
+@testable import BoardScoreData
 
 struct GetLastGamesMapperTests {
     let sut: GetLastGamesMapper
@@ -20,7 +21,7 @@ struct GetLastGamesMapperTests {
 
     @Test
     func map() {
-        let data = [Data.GetLastGamesModel.mock()]
+        let data = [BoardScoreData.Data.GetLastGamesModel.mock()]
         let expected = Domain.GetLastGamesModel(name: "test", winner: "test", date: Date())
         let result = sut.map(data)
 

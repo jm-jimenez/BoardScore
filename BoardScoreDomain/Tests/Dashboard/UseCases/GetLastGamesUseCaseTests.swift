@@ -6,23 +6,16 @@
 //
 
 import Testing
-import BoardScoreData
-import BoardScoreDataMocks
 import BoardScoreDomainMocks
 @testable import BoardScoreDomain
 
 struct GetLastGamesUseCaseTests {
     let sut: GetLastGamesUseCase
     let repository: DashboardRepositoryProtocol
-    let mapper: GetLastGamesMapperProtocol
 
     init() {
         repository = DashboardRepositoryMock()
-        mapper = GetLastGamesMapperMock()
-        sut = GetLastGamesUseCase(
-            repository: repository,
-            mapper: mapper
-        )
+        sut = GetLastGamesUseCase(repository: repository)
     }
 
     @Test

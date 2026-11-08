@@ -16,23 +16,35 @@ let package = Package(
             targets: ["BoardScoreDataMocks"]
         )
     ],
+    dependencies: [
+        .package(path: "../BoardScoreDomain")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "BoardScoreData",
+            dependencies: [
+                "BoardScoreDomain"
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
         .target(
             name: "BoardScoreDataMocks",
-            dependencies: ["BoardScoreData"],
+            dependencies: [
+                "BoardScoreData",
+                "BoardScoreDomain"
+            ],
             path: "Mocks"
         ),
         .testTarget(
             name: "BoardScoreDataTests",
-            dependencies: ["BoardScoreData"]
+            dependencies: [
+                "BoardScoreData",
+                "BoardScoreDataMocks"
+            ]
         )
     ]
 )

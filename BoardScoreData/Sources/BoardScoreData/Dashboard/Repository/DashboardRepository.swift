@@ -6,25 +6,30 @@
 //
 
 import Foundation
-
-public protocol DashboardRepositoryProtocol: Sendable {
-    func getLastGames() async throws -> [Data.GetLastGamesModel]
-}
+import BoardScoreDomain
 
 public struct DefaultDashboardRepository {
-    public init() { }
+    private let getLastGamesMapper: GetLastGamesMapperProtocol
+
+    public init(
+        getLastGamesMapper: GetLastGamesMapperProtocol = GetLastGamesMapper()
+    ) {
+        self.getLastGamesMapper = getLastGamesMapper
+    }
 }
 
 extension DefaultDashboardRepository: DashboardRepositoryProtocol {
-    public func getLastGames() async throws -> [Data.GetLastGamesModel] {
-        [
-            .init(name: "Dominion",
-                  winner: "Dani",
-                  date: Date()
-                 ),
-            .init(name: "Wingspan",
-                  winner: "Mercedes",
-                  date: Date())
-        ]
+    public func getLastGames() async throws -> [Domain.GetLastGamesModel] {
+        getLastGamesMapper.map(
+            [
+                .init(name: "Dominion",
+                      winner: "Dani",
+                      date: Date()
+                     ),
+                .init(name: "Wingspan",
+                      winner: "Mercedes",
+                      date: Date())
+            ]
+        )
     }
 }
