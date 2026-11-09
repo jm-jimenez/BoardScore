@@ -16,6 +16,7 @@ struct TopWinnersMapper: TopWinnersMapperProtocol {
         guard let domainModels else {
             return TopWinnersView.ViewData(items: [])
         }
+
         let items = domainModels.map {
             TopWinnersView.ViewData.WinnerSummary(
                 name: $0.name,

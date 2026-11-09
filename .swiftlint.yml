@@ -15,3 +15,14 @@ excluded:
 
 nesting:
   type_level: 2
+
+type_name:
+  excluded:
+    - C
+
+custom_rules:
+  blank_line_after_guard:
+    name: "Blank Line After Guard"
+    regex: '^[ \t]*guard\b(?:(?!\belse\b)[\s\S])*?\belse[ \t]*\{[^{}]*\}[ \t]*\n(?![ \t]*\n)(?![ \t]*\})'
+    message: "A guard statement must be followed by a blank line"
+    severity: warning

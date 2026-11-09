@@ -138,6 +138,7 @@ extension Segment.ViewData {
                     guard case .ratio(let double) = viewData.innerRadius else {
                         return 0
                     }
+
                     return double * 100
                 },
                 set: { newValue in
