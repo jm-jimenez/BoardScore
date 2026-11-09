@@ -41,7 +41,7 @@ extension DashboardDependencies {
     }
 
     func resolve() -> GetTopWinnersUseCaseProtocol {
-        GetTopWinnersUseCase()
+        GetTopWinnersUseCase(repository: external.resolve())
     }
 
     func resolve() -> LastGamesMapperProtocol {

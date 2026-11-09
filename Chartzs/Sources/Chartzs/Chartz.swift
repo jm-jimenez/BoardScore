@@ -28,9 +28,10 @@ public struct Chartz: View {
         let spacing: CGFloat
         let innerRadius: Space
 
-        public init(items: [Double],
-             spacing: CGFloat,
-             innerRadius: Space
+        public init(
+            items: [Double],
+            spacing: CGFloat,
+            innerRadius: Space
         ) {
             self.items = items
             self.spacing = spacing

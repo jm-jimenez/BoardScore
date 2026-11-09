@@ -10,31 +10,17 @@ public protocol GetTopWinnersUseCaseProtocol: Sendable {
 }
 
 public struct GetTopWinnersUseCase {
-    public init() {
+    private let repository: DashboardRepositoryProtocol
 
+    public init(
+        repository: DashboardRepositoryProtocol
+    ) {
+        self.repository = repository
     }
 }
 
 extension GetTopWinnersUseCase: GetTopWinnersUseCaseProtocol {
     public func callAsFunction() async throws -> [Domain.GetTopWinnersModel] {
-        [
-            .init(name: "Mercedes",
-                  lastGameWin: "Wingspan",
-                  wins: 13,
-                  losses: 6),
-            .init(name: "M@rio",
-                  lastGameWin: "Alquimistas",
-                  wins: 8,
-                  losses: 3)
-        ]
-    }
-}
-
-public extension Domain {
-    struct GetTopWinnersModel {
-        public let name: String
-        public let lastGameWin: String
-        public let wins: Int
-        public let losses: Int
+        try await repository.getTopWinners()
     }
 }

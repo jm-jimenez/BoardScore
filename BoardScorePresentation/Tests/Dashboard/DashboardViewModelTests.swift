@@ -37,7 +37,8 @@ struct DashboardViewModelTests {
             sut.state.isContent
         }
         guard case .content(let contentData) = sut.state else {
-            fatalError("")
+            Issue.record("Expected .content state, got \(sut.state)")
+            return
         }
         let count = await useCase.calledCount
         let resultCount = contentData.gamesViewData.items.count
@@ -77,7 +78,6 @@ struct DashboardViewModelTests {
         #expect(calledCount == 1)
     }
 }
-
 
 func until(condition: @escaping () -> Bool,
            timeout: Double = 5,

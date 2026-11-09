@@ -21,4 +21,10 @@ struct DashboardRepositoryTests {
         let result = try await sut.getLastGames()
         #expect(result.count == 2)
     }
+
+    @Test
+    func getTopWinners_ShouldCountTwo() async throws {
+        let result = try await sut.getTopWinners()
+        #expect(result.count == 2)
+    }
 }

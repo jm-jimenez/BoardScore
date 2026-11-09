@@ -16,12 +16,6 @@ struct LastGamesView: View {
             let name: String
             let winner: String
             let date: String
-
-            init(name: String, winner: String, date: String) {
-                self.name = name
-                self.winner = winner
-                self.date = date
-            }
         }
     }
 
@@ -66,7 +60,6 @@ struct LastGamesView: View {
         }
     }
 }
-
 
 #if DEBUG
 

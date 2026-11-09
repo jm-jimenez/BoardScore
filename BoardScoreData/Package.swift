@@ -28,7 +28,7 @@ let package = Package(
                 "BoardScoreDomain"
             ],
             swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
+                .enableUpcomingFeature("ApproachableConcurrency")
             ],
         ),
         .target(

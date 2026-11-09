@@ -7,4 +7,5 @@
 
 public protocol DashboardRepositoryProtocol: Sendable {
     func getLastGames() async throws -> [Domain.GetLastGamesModel]
+    func getTopWinners() async throws -> [Domain.GetTopWinnersModel]
 }
