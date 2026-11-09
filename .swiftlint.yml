@@ -1,0 +1,17 @@
+# SwiftLint configuration for the whole BoardScore repo.
+# Run from the repo root: `swiftlint lint` (Xcode does it on every build of the BoardScore target).
+
+included:
+  - BoardScore
+  - BoardScoreData
+  - BoardScoreDomain
+  - BoardScorePresentation
+  - Chartzs
+
+excluded:
+  - "**/.build"
+  - "**/.swiftpm"
+  - "**/DerivedData"
+
+nesting:
+  type_level: 2

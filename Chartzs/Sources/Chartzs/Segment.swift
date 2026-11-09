@@ -72,7 +72,6 @@ struct Segment: Shape {
 
 #if DEBUG
 
-
 extension Segment.ViewData {
     static var mock: Self {
         Self(startAngle: 0,

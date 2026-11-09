@@ -2,13 +2,23 @@ name: Tests
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [main, develop]
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
+  lint:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
   tests:
     runs-on: self-hosted
 

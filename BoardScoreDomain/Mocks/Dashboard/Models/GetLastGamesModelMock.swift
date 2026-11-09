@@ -1,5 +1,5 @@
 //
-//  Domain.swift
+//  GetLastGamesModelMock.swift
 //  BoardScoreDomain
 //
 //  Created by José María Jiménez on 27/10/2026.

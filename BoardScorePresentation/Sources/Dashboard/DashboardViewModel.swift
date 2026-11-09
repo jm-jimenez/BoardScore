@@ -61,7 +61,7 @@ class DashboardViewModel {
 extension DashboardViewModel: DashboardViewModelProtocol {
     func onAppear() {
         guard onAppearTask == nil else { return }
-        
+
         onAppearTask = Task { [weak self] in
             await self?.load()
         }

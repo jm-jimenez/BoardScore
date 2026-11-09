@@ -9,8 +9,12 @@ import BoardScoreDomain
 
 public struct DashboardRepositoryMock: DashboardRepositoryProtocol {
     public init() {}
-    
+
     public func getLastGames() async throws -> [Domain.GetLastGamesModel] {
+        return []
+    }
+
+    public func getTopWinners() async throws -> [Domain.GetTopWinnersModel] {
         return []
     }
 }

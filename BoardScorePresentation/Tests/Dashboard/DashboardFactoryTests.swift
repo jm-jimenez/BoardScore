@@ -6,8 +6,6 @@
 //
 
 import Testing
-import BoardScoreDomain
-import BoardScoreDomainMocks
 @testable import BoardScorePresentation
 
 struct DashboardFactoryTests {
@@ -16,11 +14,5 @@ struct DashboardFactoryTests {
     func dashboardFactory_shouldBuildView() {
         let view = DashboardFactory.build(dependencies: DashboardExternalDependenciesTest())
         #expect(view is DashboardView<DashboardViewModel>)
-    }
-}
-
-struct DashboardExternalDependenciesTest: DashboardExternalDependencies {
-    func resolve() -> DashboardRepositoryProtocol {
-        DashboardRepositoryMock()
     }
 }

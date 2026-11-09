@@ -13,7 +13,7 @@ public protocol GetLastGamesMapperProtocol: Sendable {
 
 public struct GetLastGamesMapper: GetLastGamesMapperProtocol {
     public init() { }
-    
+
     public func map(_ games: [Data.GetLastGamesModel]) -> [Domain.GetLastGamesModel] {
         games.map {
             Domain.GetLastGamesModel(
@@ -23,4 +23,3 @@ public struct GetLastGamesMapper: GetLastGamesMapperProtocol {
         }
     }
 }
-

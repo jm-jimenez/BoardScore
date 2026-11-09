@@ -11,7 +11,7 @@ let package = Package(
         .library(
             name: "Chartzs",
             targets: ["Chartzs"]
-        ),
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -19,9 +19,8 @@ let package = Package(
         .target(
             name: "Chartzs",
             swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
-            ],
-        ),
-
+                .enableUpcomingFeature("ApproachableConcurrency")
+            ]
+        )
     ]
 )

@@ -24,7 +24,7 @@ let package = Package(
             name: "BoardScorePresentation",
             dependencies: ["BoardScoreDomain", "Chartzs"],
             swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
+                .enableUpcomingFeature("ApproachableConcurrency")
             ],
         ),
         .testTarget(
