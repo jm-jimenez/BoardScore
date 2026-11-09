@@ -79,6 +79,7 @@ private extension DashboardViewModel {
         do {
             let (games, winners) = try await (lastGamesResult, topWinnersResult)
             guard !Task.isCancelled else { return }
+
             state = .content(
                 contentData: DashboardViewModelState.ContentData(
                     gamesViewData: handleGames(games),
