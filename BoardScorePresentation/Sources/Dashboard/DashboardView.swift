@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-private enum DashboardViewConstants {
-    static let chartHeight: CGFloat = 200
-    static let spacing: CGFloat = 16
-}
-
 struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtocol {
+
+    enum C {
+        static var chartHeight: CGFloat { 200 }
+        static var spacing: CGFloat { 16 }
+    }
 
     @ObservedObject
     private var viewModel: ViewModel
@@ -43,9 +43,9 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
     }
 
     func content(_ contentViewData: DashboardViewModelState.ContentData) -> some View {
-        VStack(spacing: DashboardViewConstants.spacing) {
+        VStack(spacing: C.spacing) {
             ChartView()
-                .frame(height: DashboardViewConstants.chartHeight)
+                .frame(height: C.chartHeight)
                 .frame(maxWidth: .infinity)
                 .dashboardCard()
             LastGamesView(viewData: contentViewData.gamesViewData)

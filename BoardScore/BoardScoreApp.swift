@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import BoardScorePresentation
 import BoardScoreDomain
 import BoardScoreData
@@ -16,8 +17,18 @@ import BoardScoreData
 
 extension BoardScoreApp {
     struct ModuleDependencies: DashboardExternalDependencies {
+        private let modelContainer: ModelContainer
+
+        init() {
+            do {
+                modelContainer = try PersistenceFactory.makeContainer()
+            } catch {
+                fatalError("Unable to create the SwiftData ModelContainer: \(error)")
+            }
+        }
+
         func resolve() -> DashboardRepositoryProtocol {
-            DefaultDashboardRepository()
+            DefaultDashboardRepository(modelContainer: modelContainer)
         }
     }
 }

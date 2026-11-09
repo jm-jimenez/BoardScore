@@ -128,6 +128,7 @@ private extension Chartz.ViewData {
                 Slider(value: Binding(
                     get: {
                         guard case .padding(let double) = viewData.innerRadius else { return 0 }
+
                         return double
                     },
                     set: { newValue in

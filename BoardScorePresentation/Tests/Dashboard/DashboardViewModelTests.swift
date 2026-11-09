@@ -14,14 +14,16 @@ import BoardScoreDomainMocks
 struct DashboardViewModelTests {
 
     let sut: DashboardViewModel
-    var useCase: GetLastGamesUseCaseMock
+    let getLastGamesUseCaseMock: GetLastGamesUseCaseMock
+    let getTopWinnersUseCaseMock: GetTopWinnersUseCaseMock
 
     init() {
-        self.useCase = GetLastGamesUseCaseMock()
+        self.getLastGamesUseCaseMock = GetLastGamesUseCaseMock()
+        self.getTopWinnersUseCaseMock = GetTopWinnersUseCaseMock()
         let dependencies = DashboardFactory.Dependency(external: DashboardExternalDependenciesTest())
         self.sut = DashboardViewModel(
-            getLastGamesUseCase: useCase,
-            getTopWinnersUseCase: dependencies.resolve(),
+            getLastGamesUseCase: getLastGamesUseCaseMock,
+            getTopWinnersUseCase: getTopWinnersUseCaseMock,
             lastGamesMapper: dependencies.resolve(),
             topWinnersMapper: dependencies.resolve()
         )
@@ -29,7 +31,10 @@ struct DashboardViewModelTests {
 
     @Test
     func onAppear_WhenCalled_StateShouldBeCorrect() async throws {
-        await useCase.setExecutionReturn {
+        await getLastGamesUseCaseMock.setExecutionReturn {
+            [.mock()]
+        }
+        await getTopWinnersUseCaseMock.setExecutionReturn {
             [.mock()]
         }
         sut.onAppear()
@@ -40,16 +45,21 @@ struct DashboardViewModelTests {
             Issue.record("Expected .content state, got \(sut.state)")
             return
         }
-        let count = await useCase.calledCount
-        let resultCount = contentData.gamesViewData.items.count
-        #expect(count == 1)
-        #expect(resultCount == 1)
+
+        let lastGamesCount = await getLastGamesUseCaseMock.calledCount
+        let lastGamesResultCount = contentData.gamesViewData.items.count
+        let topWinnersCount = await getTopWinnersUseCaseMock.calledCount
+        let topWinnersResultCount = contentData.winnersViewData.items.count
+        #expect(lastGamesCount == 1)
+        #expect(lastGamesResultCount == 1)
+        #expect(topWinnersCount == 1)
+        #expect(topWinnersResultCount == 1)
     }
 
     @Test
     func onAppear_WhenUseCasesThrow_ThenStateShouldBeError() async throws {
         struct TestError: Error {}
-        await useCase.setExecutionReturn {
+        await getTopWinnersUseCaseMock.setExecutionReturn {
             throw TestError()
         }
         sut.onAppear()
@@ -64,7 +74,7 @@ struct DashboardViewModelTests {
 
     @Test
     func onAppear_MultipleCalls_ShouldNotIncrementCount() async throws {
-        await useCase.setExecutionReturn {
+        await getLastGamesUseCaseMock.setExecutionReturn {
             try await Task.sleep(nanoseconds: 3_000_000)
             return [.mock()]
         }
@@ -74,7 +84,7 @@ struct DashboardViewModelTests {
         try await until {
             sut.state.isContent
         }
-        let calledCount = await useCase.calledCount
+        let calledCount = await getLastGamesUseCaseMock.calledCount
         #expect(calledCount == 1)
     }
 }

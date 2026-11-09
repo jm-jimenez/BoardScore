@@ -19,6 +19,7 @@ public actor GetLastGamesUseCaseMock: GetLastGamesUseCaseProtocol {
         guard let executionReturn else {
             return []
         }
+
         return try await executionReturn()
     }
 
