@@ -11,12 +11,14 @@ import BoardScoreDomain
 protocol DashboardViewModelProtocol: ObservableObject {
     var state: DashboardViewModelState { get }
     func onAppear()
+    func onAddGameTapped()
 }
 
 enum DashboardViewModelState: Equatable {
     case idle
     case loading
     case content(contentData: ContentData)
+    case empty
     case error
 
     var isContent: Bool {
@@ -66,6 +68,8 @@ extension DashboardViewModel: DashboardViewModelProtocol {
             await self?.load()
         }
     }
+
+    func onAddGameTapped() {}
 }
 
 private extension DashboardViewModel {
@@ -79,6 +83,11 @@ private extension DashboardViewModel {
         do {
             let (games, winners) = try await (lastGamesResult, topWinnersResult)
             guard !Task.isCancelled else { return }
+
+            guard !games.isEmpty else {
+                state = .empty
+                return
+            }
 
             state = .content(
                 contentData: DashboardViewModelState.ContentData(

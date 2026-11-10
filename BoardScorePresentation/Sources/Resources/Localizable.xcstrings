@@ -1,0 +1,94 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Add game": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir partida"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Add your first game": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade tu primera partida"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Dashboard": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumen"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Last games": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimas partidas"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "No games played yet": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no se ha jugado ninguna partida"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Top winners": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Más ganadores"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Winner": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ganador"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Wins / losses": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Victorias / derrotas"
+          }
+        }
+      },
+      "extractionState": "manual"
+    }
+  },
+  "version": "1.0"
+}

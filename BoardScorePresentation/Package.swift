@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "BoardScorePresentation",
+    defaultLocalization: "en",
     platforms: [.iOS(.v27)],
     products: [
         .library(
@@ -19,6 +20,9 @@ let package = Package(
         .target(
             name: "BoardScorePresentation",
             dependencies: ["BoardScoreDomain", "Chartzs"],
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],

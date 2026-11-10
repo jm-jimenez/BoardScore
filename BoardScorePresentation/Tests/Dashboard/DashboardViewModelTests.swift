@@ -87,6 +87,33 @@ struct DashboardViewModelTests {
         let calledCount = await getLastGamesUseCaseMock.calledCount
         #expect(calledCount == 1)
     }
+
+    @Test
+    func onAppear_WhenNoGames_StateShouldBeEmpty() async throws {
+        await getLastGamesUseCaseMock.setExecutionReturn {
+            []
+        }
+        await getTopWinnersUseCaseMock.setExecutionReturn {
+            []
+        }
+        sut.onAppear()
+        try await until {
+            sut.state == .empty
+        }
+    }
+
+    @Test
+    func onAddGameTapped_ShouldNotChangeState() {
+        sut.onAddGameTapped()
+        #expect(sut.state == .idle)
+    }
+
+    @Test
+    func placeholder_ShouldHaveThreeItemsPerSection() {
+        let placeholder = DashboardViewModelState.ContentData.placeholder
+        #expect(placeholder.gamesViewData.items.count == 3)
+        #expect(placeholder.winnersViewData.items.count == 3)
+    }
 }
 
 func until(condition: @escaping () -> Bool,

@@ -37,8 +37,8 @@ struct LastGamesView: View {
     var header: some View {
         SectionHeaderView(
             viewData: SectionHeaderView.ViewData(
-                title: "Last games",
-                info: "Winner")
+                title: "Last games".localized,
+                info: "Winner".localized)
         )
     }
 

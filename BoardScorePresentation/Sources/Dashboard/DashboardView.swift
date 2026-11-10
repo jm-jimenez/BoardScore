@@ -12,6 +12,10 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
     enum C {
         static var chartHeight: CGFloat { 200 }
         static var spacing: CGFloat { 16 }
+        static var emptySkeletonOpacity: Double { 0.4 }
+        static var emptyShadowOpacity: Double { 0.12 }
+        static var emptyShadowRadius: CGFloat { 24 }
+        static var emptyShadowOffset: CGFloat { 8 }
     }
 
     @ObservedObject
@@ -24,22 +28,73 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
     var body: some View {
         NavigationStack {
             ScrollView {
-                if case .content(let contentViewData) = viewModel.state {
+                switch viewModel.state {
+                case .content(let contentViewData):
                     content(contentViewData)
-                } else {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                default:
+                    skeleton
+                }
+            }
+            .scrollDisabled(!viewModel.state.isContent)
+            .overlay {
+                if viewModel.state == .empty {
+                    emptyState
                 }
             }
             .background {
-                Color(uiColor: .systemGroupedBackground)
+                Self.background
                     .ignoresSafeArea()
             }
-            .navigationTitle("Dashboard")
+            .navigationTitle("Dashboard".localized)
+            .animation(.default, value: viewModel.state)
         }
         .onAppear {
             viewModel.onAppear()
         }
+    }
+
+    var skeleton: some View {
+        content(.placeholder)
+            .redacted(reason: .placeholder)
+            .opacity(viewModel.state == .empty ? C.emptySkeletonOpacity : 1)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+
+    var emptyState: some View {
+        ContentUnavailableView {
+            Label {
+                Text("No games played yet".localized)
+            } icon: {
+                Image(systemName: "dice")
+            }
+        } description: {
+            Text("Add your first game".localized)
+        } actions: {
+            Button {
+                viewModel.onAddGameTapped()
+            } label: {
+                Label {
+                    Text("Add game".localized)
+                } icon: {
+                    Image(systemName: "plus")
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .dashboardCard()
+        .compositingGroup()
+        .shadow(
+            color: .black.opacity(C.emptyShadowOpacity),
+            radius: C.emptyShadowRadius,
+            y: C.emptyShadowOffset
+        )
+        .padding(.horizontal)
+    }
+
+    static var background: Color {
+        Color(uiColor: .systemGroupedBackground)
     }
 
     func content(_ contentViewData: DashboardViewModelState.ContentData) -> some View {
@@ -64,9 +119,9 @@ private class DashboardViewModelMock: DashboardViewModelProtocol {
         self.state = state
     }
 
-    func onAppear() {
+    func onAppear() {}
 
-    }
+    func onAddGameTapped() {}
 }
 
 private extension DashboardViewModelState.ContentData {
@@ -106,6 +161,10 @@ private extension DashboardViewModelState.ContentData {
 
 #Preview("Loading") {
     DashboardView(viewModel: DashboardViewModelMock(state: .loading))
+}
+
+#Preview("Empty") {
+    DashboardView(viewModel: DashboardViewModelMock(state: .empty))
 }
 
 #endif
