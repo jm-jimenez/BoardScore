@@ -8,9 +8,9 @@
 import SwiftUI
 import BoardScoreDomain
 
-protocol DashboardViewModelProtocol: ObservableObject {
+protocol DashboardViewModelProtocol: AnyObject, Observable {
     var state: DashboardViewModelState { get }
-    func onAppear()
+    func onAppear() async
     func onAddGameTapped()
 }
 
@@ -37,13 +37,13 @@ enum DashboardViewModelState: Equatable {
 @Observable
 @MainActor
 class DashboardViewModel {
-    private var onAppearTask: Task<Void, Never>?
-
     private let getLastGamesUseCase: GetLastGamesUseCaseProtocol
     private let getTopWinnersUseCase: GetTopWinnersUseCaseProtocol
 
     private let lastGamesMapper: LastGamesMapperProtocol
     private let topWinnersMapper: TopWinnersMapperProtocol
+
+    private weak var router: DashboardRouting?
 
     var state: DashboardViewModelState = .idle
 
@@ -51,30 +51,29 @@ class DashboardViewModel {
         getLastGamesUseCase: GetLastGamesUseCaseProtocol,
         getTopWinnersUseCase: GetTopWinnersUseCaseProtocol,
         lastGamesMapper: LastGamesMapperProtocol,
-        topWinnersMapper: TopWinnersMapperProtocol
+        topWinnersMapper: TopWinnersMapperProtocol,
+        router: DashboardRouting?
     ) {
         self.getLastGamesUseCase = getLastGamesUseCase
         self.getTopWinnersUseCase = getTopWinnersUseCase
         self.lastGamesMapper = lastGamesMapper
         self.topWinnersMapper = topWinnersMapper
+        self.router = router
     }
 }
 
 extension DashboardViewModel: DashboardViewModelProtocol {
-    func onAppear() {
-        guard onAppearTask == nil else { return }
-
-        onAppearTask = Task { [weak self] in
-            await self?.load()
-        }
+    func onAppear() async {
+        await load()
     }
 
-    func onAddGameTapped() {}
+    func onAddGameTapped() {
+        router?.showNewMatch()
+    }
 }
 
 private extension DashboardViewModel {
     func load() async {
-        defer { onAppearTask = nil }
         state = .loading
         let getLastGamesUseCase = getLastGamesUseCase
         let getTopWinnersUseCase = getTopWinnersUseCase

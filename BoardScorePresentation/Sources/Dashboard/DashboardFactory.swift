@@ -10,16 +10,16 @@ import BoardScoreDomain
 
 @MainActor
 public struct DashboardFactory {
-    public static func build(dependencies external: DashboardExternalDependencies) -> some View {
+    static func build(dependencies external: DashboardExternalDependencies) -> some View {
         let dependencies = Dependency(external: external)
         let viewModel = DashboardViewModel(
             getLastGamesUseCase: dependencies.resolve(),
             getTopWinnersUseCase: dependencies.resolve(),
             lastGamesMapper: dependencies.resolve(),
-            topWinnersMapper: dependencies.resolve()
+            topWinnersMapper: dependencies.resolve(),
+            router: dependencies.external.resolve()
         )
-        let view = DashboardView(viewModel: viewModel)
-        return view
+        return DashboardView(viewModel: viewModel)
     }
 
     struct Dependency: DashboardDependencies {
@@ -55,4 +55,5 @@ extension DashboardDependencies {
 
 public protocol DashboardExternalDependencies {
     func resolve() -> DashboardRepositoryProtocol
+    func resolve() -> AppCoordinatorProtocol?
 }

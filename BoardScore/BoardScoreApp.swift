@@ -6,18 +6,26 @@ import BoardScoreData
 
 @main struct BoardScoreApp: App {
 
-    private let dependencies = ModuleDependencies()
+    private let coordinator: AppCoordinator
+
+    init() {
+        let dependencies = ModuleDependencies()
+        coordinator = AppCoordinator(dependencies: dependencies)
+        dependencies.coordinator = coordinator
+    }
 
     var body: some Scene {
         WindowGroup {
-            DashboardFactory.build(dependencies: dependencies)
+            AppCoordinatorFactory.build(coordinator: coordinator)
         }
     }
 }
 
 extension BoardScoreApp {
-    struct ModuleDependencies: DashboardExternalDependencies {
+    final class ModuleDependencies: AppExternalDependencies {
         private let modelContainer: ModelContainer
+
+        weak var coordinator: AppCoordinatorProtocol?
 
         init() {
             do {
@@ -29,6 +37,18 @@ extension BoardScoreApp {
 
         func resolve() -> DashboardRepositoryProtocol {
             DefaultDashboardRepository(modelContainer: modelContainer)
+        }
+
+        func resolve() -> GamesRepositoryProtocol {
+            DefaultGamesRepository(modelContainer: modelContainer)
+        }
+
+        func resolve() -> PlayersRepositoryProtocol {
+            MockPlayersRepository()
+        }
+
+        func resolve() -> AppCoordinatorProtocol? {
+            coordinator
         }
     }
 }

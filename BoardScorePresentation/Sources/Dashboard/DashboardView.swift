@@ -18,38 +18,44 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
         static var emptyShadowOffset: CGFloat { 8 }
     }
 
-    @ObservedObject
-    private var viewModel: ViewModel
+    @State private var viewModel: ViewModel
 
     init(viewModel: ViewModel) {
-        _viewModel = ObservedObject(initialValue: viewModel)
+        _viewModel = State(initialValue: viewModel)
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                switch viewModel.state {
-                case .content(let contentViewData):
-                    content(contentViewData)
-                default:
-                    skeleton
-                }
+        ScrollView {
+            switch viewModel.state {
+            case .content(let contentViewData):
+                content(contentViewData)
+            default:
+                skeleton
             }
-            .scrollDisabled(!viewModel.state.isContent)
-            .overlay {
-                if viewModel.state == .empty {
-                    emptyState
-                }
-            }
-            .background {
-                Self.background
-                    .ignoresSafeArea()
-            }
-            .navigationTitle("Dashboard".localized)
-            .animation(.default, value: viewModel.state)
         }
-        .onAppear {
-            viewModel.onAppear()
+        .scrollDisabled(!viewModel.state.isContent)
+        .overlay {
+            if viewModel.state == .empty {
+                emptyState
+            }
+        }
+        .background {
+            Self.background
+                .ignoresSafeArea()
+        }
+        .navigationTitle("Dashboard".localized)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    viewModel.onAddGameTapped()
+                } label: {
+                    Label("Add game".localized, systemImage: "plus")
+                }
+            }
+        }
+        .animation(.default, value: viewModel.state)
+        .task {
+            await viewModel.onAppear()
         }
     }
 
@@ -112,59 +118,22 @@ struct DashboardView<ViewModel>: View where ViewModel: DashboardViewModelProtoco
 
 #if DEBUG
 
-private class DashboardViewModelMock: DashboardViewModelProtocol {
-    let state: DashboardViewModelState
-
-    init(state: DashboardViewModelState = .content(contentData: .mock)) {
-        self.state = state
-    }
-
-    func onAppear() {}
-
-    func onAddGameTapped() {}
-}
-
-private extension DashboardViewModelState.ContentData {
-    static var mock: Self {
-        Self(
-            gamesViewData: LastGamesView.ViewData(items: [
-                LastGamesView.ViewData.LastGame(
-                    name: "Dominion",
-                    winner: "Dani",
-                    date: "4 mins ago"
-                ),
-                LastGamesView.ViewData.LastGame(
-                    name: "Pociones",
-                    winner: "Mercedes",
-                    date: "5 days ago"
-                )
-            ]),
-            winnersViewData: TopWinnersView.ViewData(items: [
-                TopWinnersView.ViewData.WinnerSummary(
-                    name: "Mercedes",
-                    lastGame: "Wingspan",
-                    winsLosses: "13 / 6"
-                ),
-                TopWinnersView.ViewData.WinnerSummary(
-                    name: "M@rio",
-                    lastGame: "Alquimistas",
-                    winsLosses: "8 / 3"
-                )
-            ])
-        )
-    }
-}
-
 #Preview("Content") {
-    DashboardView(viewModel: DashboardViewModelMock())
+    NavigationStack {
+        DashboardView(viewModel: DashboardViewModelMock())
+    }
 }
 
 #Preview("Loading") {
-    DashboardView(viewModel: DashboardViewModelMock(state: .loading))
+    NavigationStack {
+        DashboardView(viewModel: DashboardViewModelMock(state: .loading))
+    }
 }
 
 #Preview("Empty") {
-    DashboardView(viewModel: DashboardViewModelMock(state: .empty))
+    NavigationStack {
+        DashboardView(viewModel: DashboardViewModelMock(state: .empty))
+    }
 }
 
 #endif
