@@ -18,6 +18,10 @@ struct NewMatchScoreGridView<ViewModel>: View where ViewModel: NewMatchViewModel
         static var fieldCornerRadius: CGFloat { 8 }
     }
 
+    @State private var labelsScrollPhase: ScrollPhase = .idle
+    @State private var isLabelsScrolledAway = false
+    @State private var isLabelsOverflowing = false
+
     private let viewModel: ViewModel
     private let game: Domain.GameModel
 
@@ -55,19 +59,54 @@ struct NewMatchScoreGridView<ViewModel>: View where ViewModel: NewMatchViewModel
     }
 
     var labelsColumn: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Color.clear
-                .frame(height: C.rowHeight)
-            ForEach(game.scoreables) { scoreable in
-                Text(scoreable.name)
-                    .lineLimit(1)
+        ScrollView(.horizontal) {
+            VStack(alignment: .leading, spacing: 0) {
+                Color.clear
                     .frame(height: C.rowHeight)
+                ForEach(game.scoreables) { scoreable in
+                    label(Text(scoreable.name))
+                }
+                label(Text("Total".localized).bold())
             }
-            Text("Total".localized)
-                .bold()
-                .frame(height: C.rowHeight)
+            .animation(.easeInOut(duration: 0.15), value: isShowingFullLabels)
+        }
+        .scrollIndicators(isLabelsOverflowing ? .visible : .hidden)
+        .scrollIndicatorsFlash(trigger: isLabelsOverflowing)
+        .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentSize.width > geometry.containerSize.width
+        } action: { _, isOverflowing in
+            isLabelsOverflowing = isOverflowing
+        }
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.x + geometry.contentInsets.leading > 0
+        } action: { _, isScrolledAway in
+            isLabelsScrolledAway = isScrolledAway
+        }
+        .onScrollPhaseChange { _, phase in
+            labelsScrollPhase = phase
         }
         .frame(width: C.labelColumnWidth, alignment: .leading)
+    }
+
+    var isShowingFullLabels: Bool {
+        labelsScrollPhase.isScrolling || isLabelsScrolledAway
+    }
+
+    func label(_ text: Text) -> some View {
+        ZStack(alignment: .leading) {
+            text
+                .lineLimit(1)
+                .fixedSize()
+                .opacity(isShowingFullLabels ? 1 : 0)
+                .accessibilityHidden(true)
+            text
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(width: C.labelColumnWidth, alignment: .leading)
+                .opacity(isShowingFullLabels ? 0 : 1)
+        }
+        .frame(height: C.rowHeight)
     }
 
     func header(for player: Domain.PlayerModel) -> some View {
