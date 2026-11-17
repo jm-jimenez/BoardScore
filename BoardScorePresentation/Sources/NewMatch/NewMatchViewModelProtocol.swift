@@ -24,6 +24,7 @@ protocol NewMatchViewModelProtocol: AnyObject, Observable {
     var date: Date { get set }
     var durationMinutes: Int? { get set }
     var hasDuration: Bool { get set }
+    var showsAddPlayerError: Bool { get set }
 
     func onAppear() async
     func total(for player: Domain.PlayerModel) -> Int
@@ -33,7 +34,7 @@ protocol NewMatchViewModelProtocol: AnyObject, Observable {
     func selectGame(_ game: Domain.GameModel)
     func confirmGameChange(_ game: Domain.GameModel)
     func cancelGameChange()
-    func addMockGame() async
+    func addNewGame()
     func addExistingPlayer(_ player: Domain.PlayerModel)
     func addNewPlayer(name: String)
     func removePlayer(_ player: Domain.PlayerModel)

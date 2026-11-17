@@ -35,6 +35,12 @@ public extension Domain.NewGameModel {
     }
 }
 
+public extension Domain.NewPlayerModel {
+    static func mock(name: String = "Lucía") -> Self {
+        Self(name: name)
+    }
+}
+
 public extension Domain.PlayerModel {
     static func mock(id: UUID = UUID(), name: String = "Mercedes") -> Self {
         Self(id: id, name: name)

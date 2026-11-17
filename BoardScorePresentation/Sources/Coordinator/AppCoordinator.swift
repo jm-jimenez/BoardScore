@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import BoardScoreDomain
 
 @Observable
 @MainActor
@@ -14,6 +15,7 @@ public final class AppCoordinator {
 
     var path = NavigationPath()
     var sheet: AppSheet?
+    var nestedSheet: AppSheet?
 
     public init(dependencies: AppExternalDependencies) {
         self.dependencies = dependencies
@@ -28,11 +30,18 @@ public final class AppCoordinator {
         switch sheet {
         case .newMatch:
             NewMatchFactory.build(dependencies: dependencies)
+        case .newGame(let onCreate):
+            NewGameFactory.build(dependencies: dependencies, onCreate: onCreate)
         }
     }
 
     func dismissSheet() {
+        dismissNestedSheet()
         sheet = nil
+    }
+
+    func dismissNestedSheet() {
+        nestedSheet = nil
     }
 }
 
@@ -52,6 +61,22 @@ extension AppCoordinator: NewMatchRouting {
     public func newMatchDidFinish() {
         dismissSheet()
     }
+
+    public func showNewGame(onCreate: @escaping @MainActor (Domain.GameModel) -> Void) {
+        nestedSheet = .newGame(onCreate: onCreate)
+    }
 }
 
-public protocol AppExternalDependencies: DashboardExternalDependencies, NewMatchExternalDependencies {}
+extension AppCoordinator: NewGameRouting {
+    public func closeNewGame() {
+        dismissNestedSheet()
+    }
+
+    public func newGameDidFinish() {
+        dismissNestedSheet()
+    }
+}
+
+public protocol AppExternalDependencies: DashboardExternalDependencies,
+                                         NewMatchExternalDependencies,
+                                         NewGameExternalDependencies {}

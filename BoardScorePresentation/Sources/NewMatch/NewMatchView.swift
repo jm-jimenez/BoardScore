@@ -79,6 +79,11 @@ struct NewMatchView<ViewModel>: View where ViewModel: NewMatchViewModelProtocol 
                     newPlayerName = ""
                 }
             }
+            .alert("Couldn't save the player".localized, isPresented: $viewModel.showsAddPlayerError) {
+                Button("OK".localized, role: .cancel) {}
+            } message: {
+                Text("Please try again.".localized)
+            }
             .task {
                 await viewModel.onAppear()
             }
@@ -114,7 +119,7 @@ struct NewMatchView<ViewModel>: View where ViewModel: NewMatchViewModelProtocol 
                 .pickerStyle(.inline)
                 Divider()
                 Button {
-                    Task { await viewModel.addMockGame() }
+                    viewModel.addNewGame()
                 } label: {
                     Label("Add new game".localized, systemImage: "plus")
                 }

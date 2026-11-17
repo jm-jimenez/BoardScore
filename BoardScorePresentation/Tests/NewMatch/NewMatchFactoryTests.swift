@@ -15,12 +15,4 @@ struct NewMatchFactoryTests {
         let view = NewMatchFactory.build(dependencies: DashboardExternalDependenciesTest())
         #expect(view is NewMatchView<NewMatchViewModel>)
     }
-
-    @Test
-    func mockGameFactory_ShouldBuildNumberedGameWithScoreables() {
-        let game = NewMatchMockGameFactory.make(number: 3)
-        #expect(game.name.hasSuffix("3"))
-        #expect(game.winCondition == .highestScore)
-        #expect(game.scoreableNames.count == 3)
-    }
 }

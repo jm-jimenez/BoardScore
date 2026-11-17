@@ -20,6 +20,9 @@ struct AppCoordinatorView: View {
         }
         .sheet(item: $coordinator.sheet) { sheet in
             coordinator.makeSheet(sheet)
+                .sheet(item: $coordinator.nestedSheet) { nestedSheet in
+                    coordinator.makeSheet(nestedSheet)
+                }
         }
     }
 }

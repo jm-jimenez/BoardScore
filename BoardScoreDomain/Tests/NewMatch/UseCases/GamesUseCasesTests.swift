@@ -46,4 +46,13 @@ struct GamesUseCasesTests {
 
         #expect(result == players)
     }
+
+    @Test
+    func addPlayer_ShouldReturnCreatedPlayer() async throws {
+        let sut = AddPlayerUseCase(repository: PlayersRepositoryMock())
+
+        let result = try await sut(.mock(name: "Lucía"))
+
+        #expect(result.name == "Lucía")
+    }
 }

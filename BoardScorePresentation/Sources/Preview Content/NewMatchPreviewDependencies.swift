@@ -25,6 +25,7 @@ final class NewMatchViewModelMock: NewMatchViewModelProtocol {
 
     var date = Date()
     var durationMinutes: Int?
+    var showsAddPlayerError = false
     var hasDuration: Bool {
         get { durationMinutes != nil }
         set { durationMinutes = newValue ? 60 : nil }
@@ -76,7 +77,7 @@ final class NewMatchViewModelMock: NewMatchViewModelProtocol {
     func selectGame(_ game: Domain.GameModel) {}
     func confirmGameChange(_ game: Domain.GameModel) {}
     func cancelGameChange() {}
-    func addMockGame() async {}
+    func addNewGame() {}
     func addExistingPlayer(_ player: Domain.PlayerModel) {}
     func addNewPlayer(name: String) {}
     func removePlayer(_ player: Domain.PlayerModel) {}

@@ -15,11 +15,13 @@ final class NewMatchViewModel {
     static let defaultDurationMinutes = 60
 
     private let getGamesUseCase: GetGamesUseCaseProtocol
-    private let addGameUseCase: AddGameUseCaseProtocol
     private let getPlayersUseCase: GetPlayersUseCaseProtocol
+    private let addPlayerUseCase: AddPlayerUseCaseProtocol
     private let resolveWinnersUseCase: ResolveWinnersUseCaseProtocol
 
     private weak var router: NewMatchRouting?
+
+    private var addPlayerTask: Task<Void, Never>?
 
     private(set) var games: [Domain.GameModel] = []
     private(set) var selectedGame: Domain.GameModel?
@@ -32,17 +34,18 @@ final class NewMatchViewModel {
 
     var date: Date = .now
     var durationMinutes: Int?
+    var showsAddPlayerError = false
 
     init(
         getGamesUseCase: GetGamesUseCaseProtocol,
-        addGameUseCase: AddGameUseCaseProtocol,
         getPlayersUseCase: GetPlayersUseCaseProtocol,
+        addPlayerUseCase: AddPlayerUseCaseProtocol,
         resolveWinnersUseCase: ResolveWinnersUseCaseProtocol,
         router: NewMatchRouting?
     ) {
         self.getGamesUseCase = getGamesUseCase
-        self.addGameUseCase = addGameUseCase
         self.getPlayersUseCase = getPlayersUseCase
+        self.addPlayerUseCase = addPlayerUseCase
         self.resolveWinnersUseCase = resolveWinnersUseCase
         self.router = router
     }
@@ -120,13 +123,10 @@ extension NewMatchViewModel: NewMatchViewModelProtocol {
         pendingGame = nil
     }
 
-    func addMockGame() async {
-        let newGame = NewMatchMockGameFactory.make(number: games.count + 1)
-        guard let game = try? await addGameUseCase(newGame) else { return }
-
-        games.append(game)
-        games.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        selectGame(game)
+    func addNewGame() {
+        router?.showNewGame { [weak self] game in
+            self?.didCreate(game)
+        }
     }
 
     func addExistingPlayer(_ player: Domain.PlayerModel) {
@@ -139,9 +139,10 @@ extension NewMatchViewModel: NewMatchViewModelProtocol {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let player = Domain.PlayerModel(name: trimmed)
-        knownPlayers.append(player)
-        participants.append(player)
+        let newPlayer = Domain.NewPlayerModel(name: trimmed)
+        addPlayerTask = Task { [weak self] in
+            await self?.add(newPlayer)
+        }
     }
 
     func removePlayer(_ player: Domain.PlayerModel) {
@@ -202,6 +203,24 @@ extension NewMatchViewModel {
 }
 
 private extension NewMatchViewModel {
+    func add(_ newPlayer: Domain.NewPlayerModel) async {
+        defer { addPlayerTask = nil }
+
+        do {
+            let player = try await addPlayerUseCase(newPlayer)
+            knownPlayers.append(player)
+            participants.append(player)
+        } catch {
+            showsAddPlayerError = true
+        }
+    }
+
+    func didCreate(_ game: Domain.GameModel) {
+        games.append(game)
+        games.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        selectGame(game)
+    }
+
     func resolveWinners(in game: Domain.GameModel) -> Set<Domain.PlayerModel> {
         resolveWinnersUseCase(totals: totals, winCondition: game.winCondition)
     }

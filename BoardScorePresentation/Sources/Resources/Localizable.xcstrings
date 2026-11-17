@@ -14,6 +14,17 @@
     "0" : {
 
     },
+    "A game with this name already exists." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya existe un juego con este nombre."
+          }
+        }
+      }
+    },
     "Add" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -58,6 +69,17 @@
         }
       }
     },
+    "Add scoreable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir puntuable"
+          }
+        }
+      }
+    },
     "Add your first game" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -80,13 +102,13 @@
         }
       }
     },
-    "Bonus" : {
+    "At least one scoreable is needed to save." : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bonus"
+            "value" : "Se necesita al menos un puntuable para guardar."
           }
         }
       }
@@ -146,6 +168,28 @@
         }
       }
     },
+    "Couldn't save the game" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido guardar el juego"
+          }
+        }
+      }
+    },
+    "Couldn't save the player" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido guardar el jugador"
+          }
+        }
+      }
+    },
     "Create player" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -201,13 +245,13 @@
         }
       }
     },
-    "Game %lld" : {
+    "Highest score" : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Juego %lld"
+            "value" : "Mayor puntuación"
           }
         }
       }
@@ -230,6 +274,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Últimas partidas"
+          }
+        }
+      }
+    },
+    "Lowest score" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menor puntuación"
           }
         }
       }
@@ -267,6 +322,17 @@
         }
       }
     },
+    "New game" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo juego"
+          }
+        }
+      }
+    },
     "New match" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -300,24 +366,24 @@
         }
       }
     },
-    "Penalty" : {
+    "OK" : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Penalización"
+            "value" : "Aceptar"
           }
         }
       }
     },
-    "Points" : {
+    "Please try again." : {
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puntos"
+            "value" : "Inténtalo de nuevo."
           }
         }
       }
@@ -340,6 +406,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guardar"
+          }
+        }
+      }
+    },
+    "Scoreable name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del puntuable"
+          }
+        }
+      }
+    },
+    "Scoreables" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntuables"
+          }
+        }
+      }
+    },
+    "Scoreables can't be empty." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puede haber puntuables vacíos."
           }
         }
       }

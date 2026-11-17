@@ -17,4 +17,8 @@ public struct PlayersRepositoryMock: PlayersRepositoryProtocol {
     public func getPlayers() async throws -> [Domain.PlayerModel] {
         players
     }
+
+    public func addPlayer(_ player: Domain.NewPlayerModel) async throws -> Domain.PlayerModel {
+        Domain.PlayerModel(name: player.name)
+    }
 }

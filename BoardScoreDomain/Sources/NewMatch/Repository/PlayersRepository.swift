@@ -7,4 +7,5 @@
 
 public protocol PlayersRepositoryProtocol: Sendable {
     func getPlayers() async throws -> [Domain.PlayerModel]
+    func addPlayer(_ player: Domain.NewPlayerModel) async throws -> Domain.PlayerModel
 }

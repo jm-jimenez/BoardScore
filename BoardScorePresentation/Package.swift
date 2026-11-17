@@ -10,6 +10,10 @@ let package = Package(
         .library(
             name: "BoardScorePresentation",
             targets: ["BoardScorePresentation"]
+        ),
+        .library(
+            name: "BoardScorePresentationMocks",
+            targets: ["BoardScorePresentationMocks"]
         )
     ],
     dependencies: [
@@ -20,6 +24,7 @@ let package = Package(
         .target(
             name: "BoardScorePresentation",
             dependencies: ["BoardScoreDomain", "Chartzs"],
+            path: "Sources",
             resources: [
                 .process("Resources")
             ],
@@ -27,9 +32,18 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
         ),
+        .target(
+            name: "BoardScorePresentationMocks",
+            dependencies: [
+                "BoardScorePresentation",
+                "BoardScoreDomain"
+            ],
+            path: "Mocks"
+        ),
         .testTarget(
             name: "BoardScorePresentationTests",
             dependencies: ["BoardScorePresentation",
+                           "BoardScorePresentationMocks",
                            .product(name: "BoardScoreDomainMocks", package: "BoardScoreDomain")
                           ]
         )

@@ -9,6 +9,7 @@ import Foundation
 import Testing
 import BoardScoreDomain
 import BoardScoreDomainMocks
+import BoardScorePresentationMocks
 @testable import BoardScorePresentation
 
 @MainActor
@@ -16,8 +17,8 @@ struct NewMatchViewModelTests {
 
     let sut: NewMatchViewModel
     let getGamesUseCaseMock = GetGamesUseCaseMock()
-    let addGameUseCaseMock = AddGameUseCaseMock()
     let getPlayersUseCaseMock = GetPlayersUseCaseMock()
+    let addPlayerUseCaseMock = AddPlayerUseCaseMock()
     let router = NewMatchRouterMock()
 
     let wingspan = Domain.GameModel.mock(
@@ -39,8 +40,8 @@ struct NewMatchViewModelTests {
     init() {
         sut = NewMatchViewModel(
             getGamesUseCase: getGamesUseCaseMock,
-            addGameUseCase: addGameUseCaseMock,
             getPlayersUseCase: getPlayersUseCaseMock,
+            addPlayerUseCase: addPlayerUseCaseMock,
             resolveWinnersUseCase: ResolveWinnersUseCase(),
             router: router
         )
@@ -101,41 +102,61 @@ struct NewMatchViewModelTests {
     }
 
     @Test
-    func addMockGame_ShouldPersistSortAndSelectIt() async {
+    func addNewGame_ShouldAskRouterAndSelectCreatedGame() async {
         await load()
+        let azul = Domain.GameModel.mock(name: "Azul")
 
-        await sut.addMockGame()
+        sut.addNewGame()
+        router.receivedOnCreate?(azul)
 
-        let receivedGame = await addGameUseCaseMock.receivedGame
-        #expect(receivedGame?.name.hasSuffix("3") == true)
-        #expect(sut.games.count == 3)
-        #expect(sut.selectedGame?.name == receivedGame?.name)
-        let names = sut.games.map(\.name)
-        #expect(names == names.sorted { $0.localizedStandardCompare($1) == .orderedAscending })
+        #expect(router.showNewGameCount == 1)
+        #expect(sut.games == [azul, golf, wingspan])
+        #expect(sut.selectedGame == azul)
     }
 
     @Test
-    func addMockGame_WhenUseCaseFails_ShouldKeepGames() async {
-        struct TestError: Error {}
-        await load()
-        await addGameUseCaseMock.setExecutionReturn { _ in throw TestError() }
+    func addNewGame_WithScores_ShouldAskBeforeSelectingCreatedGame() async {
+        await startMatch(players: [mercedes])
+        sut.updateScore("12", for: mercedes, scoreable: wingspan.scoreables[0])
+        let azul = Domain.GameModel.mock(name: "Azul")
 
-        await sut.addMockGame()
+        sut.addNewGame()
+        router.receivedOnCreate?(azul)
 
-        #expect(sut.games == [golf, wingspan])
-        #expect(sut.selectedGame == nil)
+        #expect(sut.games.contains(azul))
+        #expect(sut.selectedGame == wingspan)
+        #expect(sut.pendingGame == azul)
     }
 
     @Test
-    func addPlayers_ShouldUpdateParticipantsAndAvailablePlayers() async {
+    func addPlayers_ShouldUpdateParticipantsAndAvailablePlayers() async throws {
         await load()
         sut.addExistingPlayer(mercedes)
         sut.addExistingPlayer(mercedes)
-        sut.addNewPlayer(name: "  Lucía  ")
         sut.addNewPlayer(name: "   ")
+        sut.addNewPlayer(name: "  Lucía  ")
+        try await until { sut.participants.count == 2 }
 
+        let calledCount = await addPlayerUseCaseMock.calledCount
+        let receivedPlayer = await addPlayerUseCaseMock.receivedPlayer
+        #expect(calledCount == 1)
+        #expect(receivedPlayer == Domain.NewPlayerModel(name: "Lucía"))
         #expect(sut.participants.map(\.name) == ["Mercedes", "Lucía"])
         #expect(sut.availablePlayers.map(\.name) == ["Dani", "M@rio"])
+        #expect(sut.showsAddPlayerError == false)
+    }
+
+    @Test
+    func addNewPlayer_WhenUseCaseFails_ShouldShowError() async throws {
+        struct TestError: Error {}
+        await load()
+        await addPlayerUseCaseMock.setExecutionReturn { _ in throw TestError() }
+
+        sut.addNewPlayer(name: "Lucía")
+        try await until { sut.showsAddPlayerError }
+
+        #expect(sut.participants.isEmpty)
+        #expect(sut.availablePlayers.map(\.name) == ["Mercedes", "Dani", "M@rio"])
     }
 
     @Test

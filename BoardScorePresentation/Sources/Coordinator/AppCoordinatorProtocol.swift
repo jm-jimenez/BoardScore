@@ -6,4 +6,4 @@
 //
 
 @MainActor
-public protocol AppCoordinatorProtocol: DashboardRouting, NewMatchRouting {}
+public protocol AppCoordinatorProtocol: DashboardRouting, NewMatchRouting, NewGameRouting {}

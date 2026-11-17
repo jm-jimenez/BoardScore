@@ -14,8 +14,8 @@ public struct NewMatchFactory {
         let dependencies = Dependency(external: external)
         let viewModel = NewMatchViewModel(
             getGamesUseCase: dependencies.resolve(),
-            addGameUseCase: dependencies.resolve(),
             getPlayersUseCase: dependencies.resolve(),
+            addPlayerUseCase: dependencies.resolve(),
             resolveWinnersUseCase: dependencies.resolve(),
             router: dependencies.external.resolve()
         )
@@ -30,8 +30,8 @@ public struct NewMatchFactory {
 protocol NewMatchDependencies {
     var external: NewMatchExternalDependencies { get }
     func resolve() -> GetGamesUseCaseProtocol
-    func resolve() -> AddGameUseCaseProtocol
     func resolve() -> GetPlayersUseCaseProtocol
+    func resolve() -> AddPlayerUseCaseProtocol
     func resolve() -> ResolveWinnersUseCaseProtocol
 }
 
@@ -40,12 +40,12 @@ extension NewMatchDependencies {
         GetGamesUseCase(repository: external.resolve())
     }
 
-    func resolve() -> AddGameUseCaseProtocol {
-        AddGameUseCase(repository: external.resolve())
-    }
-
     func resolve() -> GetPlayersUseCaseProtocol {
         GetPlayersUseCase(repository: external.resolve())
+    }
+
+    func resolve() -> AddPlayerUseCaseProtocol {
+        AddPlayerUseCase(repository: external.resolve())
     }
 
     func resolve() -> ResolveWinnersUseCaseProtocol {

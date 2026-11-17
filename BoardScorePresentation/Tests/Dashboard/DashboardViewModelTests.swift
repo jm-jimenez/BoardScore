@@ -8,6 +8,7 @@
 import Foundation
 import Testing
 import BoardScoreDomainMocks
+import BoardScorePresentationMocks
 @testable import BoardScorePresentation
 
 @MainActor

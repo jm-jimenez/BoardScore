@@ -44,7 +44,7 @@ extension BoardScoreApp {
         }
 
         func resolve() -> PlayersRepositoryProtocol {
-            MockPlayersRepository()
+            DefaultPlayersRepository(modelContainer: modelContainer)
         }
 
         func resolve() -> AppCoordinatorProtocol? {

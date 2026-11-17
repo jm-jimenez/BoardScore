@@ -5,8 +5,20 @@
 //  Created by José María Jiménez on 12/11/2026.
 //
 
-enum AppSheet: String, Identifiable {
-    case newMatch
+import BoardScoreDomain
 
-    var id: String { rawValue }
+enum AppSheet: Identifiable, Equatable {
+    case newMatch
+    case newGame(onCreate: @MainActor (Domain.GameModel) -> Void)
+
+    var id: String {
+        switch self {
+        case .newMatch: "newMatch"
+        case .newGame: "newGame"
+        }
+    }
+
+    static func == (lhs: AppSheet, rhs: AppSheet) -> Bool {
+        lhs.id == rhs.id
+    }
 }
