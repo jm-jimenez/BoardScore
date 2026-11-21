@@ -16,13 +16,39 @@ public final class AppCoordinator {
     var path = NavigationPath()
     var sheet: AppSheet?
     var nestedSheet: AppSheet?
+    var section: AppSection = .dashboard
+    var isSideMenuPresented = false
 
     public init(dependencies: AppExternalDependencies) {
         self.dependencies = dependencies
     }
 
+    @ViewBuilder
     func makeRoot() -> some View {
-        DashboardFactory.build(dependencies: dependencies)
+        switch section {
+        case .dashboard:
+            DashboardFactory.build(dependencies: dependencies)
+        case .games:
+            GamesFactory.build()
+        case .players:
+            PlayersFactory.build()
+        }
+    }
+
+    func showSideMenu() {
+        isSideMenuPresented = true
+    }
+
+    func hideSideMenu() {
+        isSideMenuPresented = false
+    }
+
+    func select(_ section: AppSection) {
+        if self.section != section {
+            path = NavigationPath()
+            self.section = section
+        }
+        hideSideMenu()
     }
 
     @ViewBuilder

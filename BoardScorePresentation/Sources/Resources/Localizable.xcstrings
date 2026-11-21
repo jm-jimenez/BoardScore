@@ -256,6 +256,17 @@
         }
       }
     },
+    "Games" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juegos"
+          }
+        }
+      }
+    },
     "Highest score" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -296,6 +307,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menor puntuación"
+          }
+        }
+      }
+    },
+    "Menu" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menú"
           }
         }
       }
@@ -384,6 +406,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aceptar"
+          }
+        }
+      }
+    },
+    "Players" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jugadores"
           }
         }
       }

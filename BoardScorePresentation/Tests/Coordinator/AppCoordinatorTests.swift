@@ -87,7 +87,71 @@ struct AppCoordinatorTests {
 
     @Test
     func makeRoot_ShouldBuildDashboard() {
-        #expect(sut.makeRoot() is DashboardView<DashboardViewModel>)
+        #expect(sut.section == .dashboard)
+        #expect(rootDescription.contains("DashboardView<DashboardViewModel>"))
+    }
+
+    @Test
+    func makeRoot_WhenGamesSelected_ShouldBuildGames() {
+        sut.select(.games)
+        #expect(rootDescription.contains("GamesView"))
+    }
+
+    @Test
+    func makeRoot_WhenPlayersSelected_ShouldBuildPlayers() {
+        sut.select(.players)
+        #expect(rootDescription.contains("PlayersView"))
+    }
+
+    @Test
+    func showSideMenu_ShouldPresentSideMenu() {
+        sut.showSideMenu()
+        #expect(sut.isSideMenuPresented)
+    }
+
+    @Test
+    func hideSideMenu_ShouldDismissSideMenu() {
+        sut.showSideMenu()
+        sut.hideSideMenu()
+        #expect(sut.isSideMenuPresented == false)
+    }
+
+    @Test
+    func select_ShouldChangeSectionResetPathAndHideSideMenu() {
+        sut.path.append("detail")
+        sut.showSideMenu()
+
+        sut.select(.players)
+
+        #expect(sut.section == .players)
+        #expect(sut.path.isEmpty)
+        #expect(sut.isSideMenuPresented == false)
+    }
+
+    @Test
+    func select_WhenSameSection_ShouldKeepPathAndHideSideMenu() {
+        sut.path.append("detail")
+        sut.showSideMenu()
+
+        sut.select(.dashboard)
+
+        #expect(sut.section == .dashboard)
+        #expect(sut.path.count == 1)
+        #expect(sut.isSideMenuPresented == false)
+    }
+
+    @Test
+    func appSection_ShouldExposeTitleAndImageForEverySection() {
+        #expect(AppSection.allCases == [.dashboard, .games, .players])
+        #expect(AppSection.allCases.map(\.title) == ["Dashboard".localized, "Games".localized, "Players".localized])
+        #expect(AppSection.allCases.map(\.systemImage) == ["chart.bar.xaxis", "dice", "person.2"])
+        #expect(AppSection.games.id == .games)
+    }
+
+    @Test
+    func factories_ShouldBuildGamesAndPlayers() {
+        #expect(GamesFactory.build() is GamesView)
+        #expect(PlayersFactory.build() is PlayersView)
     }
 
     @Test
@@ -133,5 +197,11 @@ struct AppCoordinatorTests {
     @Test
     func factory_ShouldBuildCoordinatorView() {
         #expect(AppCoordinatorFactory.build(coordinator: sut) is AppCoordinatorView)
+    }
+}
+
+private extension AppCoordinatorTests {
+    var rootDescription: String {
+        String(describing: type(of: sut.makeRoot()))
     }
 }
