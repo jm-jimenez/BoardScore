@@ -26,6 +26,7 @@ final class NewMatchViewModelMock: NewMatchViewModelProtocol {
     var date = Date()
     var durationMinutes: Int?
     var showsAddPlayerError = false
+    var showsSaveError = false
     var hasDuration: Bool {
         get { durationMinutes != nil }
         set { durationMinutes = newValue ? 60 : nil }

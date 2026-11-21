@@ -46,3 +46,21 @@ public extension Domain.PlayerModel {
         Self(id: id, name: name)
     }
 }
+
+public extension Domain.NewMatchModel {
+    static func mock(
+        game: Domain.GameModel = .mock(),
+        playedAt: Date = Date(timeIntervalSince1970: 1_000),
+        durationMinutes: Int? = nil,
+        isWinnerManuallySelected: Bool = false,
+        participants: [Participant] = []
+    ) -> Self {
+        Self(
+            game: game,
+            playedAt: playedAt,
+            durationMinutes: durationMinutes,
+            isWinnerManuallySelected: isWinnerManuallySelected,
+            participants: participants
+        )
+    }
+}

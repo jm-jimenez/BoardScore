@@ -179,6 +179,17 @@
         }
       }
     },
+    "Couldn't save the match" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido guardar la partida"
+          }
+        }
+      }
+    },
     "Couldn't save the player" : {
       "extractionState" : "manual",
       "localizations" : {

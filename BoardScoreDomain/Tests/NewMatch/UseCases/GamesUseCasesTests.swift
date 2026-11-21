@@ -55,4 +55,16 @@ struct GamesUseCasesTests {
 
         #expect(result.name == "Lucía")
     }
+
+    @Test
+    func addMatch_ShouldSendMatchToRepository() async throws {
+        let repository = MatchesRepositoryMock()
+        let sut = AddMatchUseCase(repository: repository)
+        let match = Domain.NewMatchModel.mock(durationMinutes: 30)
+
+        try await sut(match)
+
+        let receivedMatch = await repository.receivedMatch
+        #expect(receivedMatch == match)
+    }
 }

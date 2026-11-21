@@ -47,6 +47,10 @@ extension BoardScoreApp {
             DefaultPlayersRepository(modelContainer: modelContainer)
         }
 
+        func resolve() -> MatchesRepositoryProtocol {
+            DefaultMatchesRepository(modelContainer: modelContainer)
+        }
+
         func resolve() -> AppCoordinatorProtocol? {
             coordinator
         }

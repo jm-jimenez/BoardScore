@@ -13,13 +13,16 @@ import BoardScorePresentationMocks
 @testable import BoardScorePresentation
 
 @MainActor
+// swiftlint:disable:next type_body_length
 struct NewMatchViewModelTests {
 
     let sut: NewMatchViewModel
     let getGamesUseCaseMock = GetGamesUseCaseMock()
     let getPlayersUseCaseMock = GetPlayersUseCaseMock()
     let addPlayerUseCaseMock = AddPlayerUseCaseMock()
+    let addMatchUseCaseMock = AddMatchUseCaseMock()
     let router = NewMatchRouterMock()
+    private let onFinishSpy: OnFinishSpy
 
     let wingspan = Domain.GameModel.mock(
         name: "Wingspan",
@@ -38,12 +41,16 @@ struct NewMatchViewModelTests {
     let mario = Domain.PlayerModel.mock(name: "M@rio")
 
     init() {
+        let onFinishSpy = OnFinishSpy()
+        self.onFinishSpy = onFinishSpy
         sut = NewMatchViewModel(
             getGamesUseCase: getGamesUseCaseMock,
             getPlayersUseCase: getPlayersUseCaseMock,
             addPlayerUseCase: addPlayerUseCaseMock,
+            addMatchUseCase: addMatchUseCaseMock,
             resolveWinnersUseCase: ResolveWinnersUseCase(),
-            router: router
+            router: router,
+            onFinish: { onFinishSpy() }
         )
     }
 
@@ -245,34 +252,56 @@ struct NewMatchViewModelTests {
         sut.removePlayer(dani)
         #expect(sut.canSave == false)
         sut.save()
-        #expect(sut.result == nil)
+        #expect(sut.isSaving == false)
     }
 
     @Test
-    func save_WithClearWinner_ShouldBuildResult() async {
+    func save_WithClearWinner_ShouldPersistMatchAndFinish() async throws {
         await startMatch(players: [mercedes, dani])
         let birds = wingspan.scoreables[0]
+        let eggs = wingspan.scoreables[1]
+        let date = Date(timeIntervalSince1970: 1_000)
         sut.updateScore("20", for: mercedes, scoreable: birds)
         sut.updateScore("35", for: dani, scoreable: birds)
+        sut.date = date
         sut.durationMinutes = 45
 
         sut.save()
 
-        let result = sut.result
-        #expect(router.finishCount == 1)
-        #expect(result?.game == wingspan)
-        #expect(result?.durationMinutes == 45)
-        #expect(result?.isWinnerManuallySelected == false)
-        #expect(result?.participants.map(\.player.name) == ["Mercedes", "Dani"])
-        #expect(result?.participants.map(\.turnOrder) == [0, 1])
-        #expect(result?.participants.map(\.total) == [20, 35])
-        #expect(result?.participants.map(\.isWinner) == [false, true])
-        #expect(result?.participants.first?.scores[birds] == 20)
-        #expect(result?.participants.first?.scores[wingspan.scoreables[1]] == 0)
+        #expect(sut.isSaving)
+        #expect(sut.canSave == false)
+        try await until { router.finishCount == 1 }
+        let match = await addMatchUseCaseMock.receivedMatch
+        #expect(onFinishSpy.count == 1)
+        #expect(sut.isSaving == false)
+        #expect(match?.game == wingspan)
+        #expect(match?.playedAt == date)
+        #expect(match?.durationMinutes == 45)
+        #expect(match?.isWinnerManuallySelected == false)
+        #expect(match?.participants.map(\.player) == [mercedes, dani])
+        #expect(match?.participants.map(\.turnOrder) == [0, 1])
+        #expect(match?.participants.map(\.isWinner) == [false, true])
+        #expect(match?.participants.first?.scores == [birds: 20, eggs: 0])
     }
 
     @Test
-    func save_WithTie_ShouldAskForWinnerThenBuildResult() async {
+    func save_WhenUseCaseFails_ShouldShowErrorAndStayOpen() async throws {
+        struct TestError: Error {}
+        await addMatchUseCaseMock.setExecutionReturn { _ in throw TestError() }
+        await startMatch(players: [mercedes, dani])
+        sut.updateScore("20", for: mercedes, scoreable: wingspan.scoreables[0])
+
+        sut.save()
+
+        try await until { sut.showsSaveError }
+        #expect(sut.isSaving == false)
+        #expect(sut.canSave)
+        #expect(router.finishCount == 0)
+        #expect(onFinishSpy.count == 0)
+    }
+
+    @Test
+    func save_WithTie_ShouldAskForWinnerThenPersistMatch() async throws {
         await startMatch(players: [mercedes, dani, mario])
         let birds = wingspan.scoreables[0]
         sut.updateScore("10", for: mercedes, scoreable: birds)
@@ -280,7 +309,7 @@ struct NewMatchViewModelTests {
         sut.updateScore("3", for: mario, scoreable: birds)
 
         sut.save()
-        #expect(sut.result == nil)
+        #expect(sut.isSaving == false)
         #expect(sut.tiedPlayers.map(\.name) == ["Mercedes", "Dani"])
 
         sut.cancelTie()
@@ -290,8 +319,10 @@ struct NewMatchViewModelTests {
         sut.selectTieWinner(dani)
 
         #expect(sut.tiedPlayers.isEmpty)
-        #expect(sut.result?.isWinnerManuallySelected == true)
-        #expect(sut.result?.participants.map(\.isWinner) == [false, true, false])
+        try await until { onFinishSpy.count == 1 }
+        let match = await addMatchUseCaseMock.receivedMatch
+        #expect(match?.isWinnerManuallySelected == true)
+        #expect(match?.participants.map(\.isWinner) == [false, true, false])
     }
 
     @Test
@@ -304,11 +335,20 @@ struct NewMatchViewModelTests {
     @Test
     func selectTieWinner_WithoutGame_ShouldDoNothing() {
         sut.selectTieWinner(Domain.PlayerModel.mock(name: "Nobody"))
-        #expect(sut.result == nil)
+        #expect(sut.isSaving == false)
     }
 }
 
 private extension NewMatchViewModelTests {
+    @MainActor
+    final class OnFinishSpy {
+        private(set) var count = 0
+
+        func callAsFunction() {
+            count += 1
+        }
+    }
+
     func load() async {
         let games = [golf, wingspan]
         let players = [mercedes, dani, mario]

@@ -84,6 +84,11 @@ struct NewMatchView<ViewModel>: View where ViewModel: NewMatchViewModelProtocol 
             } message: {
                 Text("Please try again.".localized)
             }
+            .alert("Couldn't save the match".localized, isPresented: $viewModel.showsSaveError) {
+                Button("OK".localized, role: .cancel) {}
+            } message: {
+                Text("Please try again.".localized)
+            }
             .task {
                 await viewModel.onAppear()
             }

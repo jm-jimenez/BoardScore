@@ -45,6 +45,8 @@ class DashboardViewModel {
 
     private weak var router: DashboardRouting?
 
+    private var reloadTask: Task<Void, Never>?
+
     var state: DashboardViewModelState = .idle
 
     init(
@@ -68,13 +70,24 @@ extension DashboardViewModel: DashboardViewModelProtocol {
     }
 
     func onAddGameTapped() {
-        router?.showNewMatch()
+        router?.showNewMatch { [weak self] in
+            self?.reload()
+        }
     }
 }
 
 private extension DashboardViewModel {
+    func reload() {
+        reloadTask = Task { [weak self] in
+            await self?.load()
+            self?.reloadTask = nil
+        }
+    }
+
     func load() async {
-        state = .loading
+        if !state.isContent {
+            state = .loading
+        }
         let getLastGamesUseCase = getLastGamesUseCase
         let getTopWinnersUseCase = getTopWinnersUseCase
         async let lastGamesResult = getLastGamesUseCase()

@@ -12,7 +12,7 @@ struct NewMatchFactoryTests {
 
     @MainActor @Test
     func newMatchFactory_ShouldBuildView() {
-        let view = NewMatchFactory.build(dependencies: DashboardExternalDependenciesTest())
+        let view = NewMatchFactory.build(dependencies: DashboardExternalDependenciesTest()) {}
         #expect(view is NewMatchView<NewMatchViewModel>)
     }
 }

@@ -7,5 +7,5 @@
 
 @MainActor
 public protocol DashboardRouting: AnyObject {
-    func showNewMatch()
+    func showNewMatch(onFinish: @escaping @MainActor () -> Void)
 }

@@ -10,14 +10,19 @@ import BoardScoreDomain
 
 @MainActor
 public struct NewMatchFactory {
-    static func build(dependencies external: NewMatchExternalDependencies) -> some View {
+    static func build(
+        dependencies external: NewMatchExternalDependencies,
+        onFinish: @escaping @MainActor () -> Void
+    ) -> some View {
         let dependencies = Dependency(external: external)
         let viewModel = NewMatchViewModel(
             getGamesUseCase: dependencies.resolve(),
             getPlayersUseCase: dependencies.resolve(),
             addPlayerUseCase: dependencies.resolve(),
+            addMatchUseCase: dependencies.resolve(),
             resolveWinnersUseCase: dependencies.resolve(),
-            router: dependencies.external.resolve()
+            router: dependencies.external.resolve(),
+            onFinish: onFinish
         )
         return NewMatchView(viewModel: viewModel)
     }
@@ -32,6 +37,7 @@ protocol NewMatchDependencies {
     func resolve() -> GetGamesUseCaseProtocol
     func resolve() -> GetPlayersUseCaseProtocol
     func resolve() -> AddPlayerUseCaseProtocol
+    func resolve() -> AddMatchUseCaseProtocol
     func resolve() -> ResolveWinnersUseCaseProtocol
 }
 
@@ -48,6 +54,10 @@ extension NewMatchDependencies {
         AddPlayerUseCase(repository: external.resolve())
     }
 
+    func resolve() -> AddMatchUseCaseProtocol {
+        AddMatchUseCase(repository: external.resolve())
+    }
+
     func resolve() -> ResolveWinnersUseCaseProtocol {
         ResolveWinnersUseCase()
     }
@@ -56,5 +66,6 @@ extension NewMatchDependencies {
 public protocol NewMatchExternalDependencies {
     func resolve() -> GamesRepositoryProtocol
     func resolve() -> PlayersRepositoryProtocol
+    func resolve() -> MatchesRepositoryProtocol
     func resolve() -> AppCoordinatorProtocol?
 }

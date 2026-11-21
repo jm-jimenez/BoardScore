@@ -22,6 +22,10 @@ struct DashboardExternalDependenciesTest: AppExternalDependencies {
         PlayersRepositoryMock()
     }
 
+    func resolve() -> MatchesRepositoryProtocol {
+        MatchesRepositoryMock()
+    }
+
     func resolve() -> AppCoordinatorProtocol? {
         nil
     }

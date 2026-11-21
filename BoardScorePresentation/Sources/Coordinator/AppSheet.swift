@@ -8,7 +8,7 @@
 import BoardScoreDomain
 
 enum AppSheet: Identifiable, Equatable {
-    case newMatch
+    case newMatch(onFinish: @MainActor () -> Void)
     case newGame(onCreate: @MainActor (Domain.GameModel) -> Void)
 
     var id: String {

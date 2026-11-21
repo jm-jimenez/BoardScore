@@ -17,11 +17,14 @@ final class NewMatchViewModel {
     private let getGamesUseCase: GetGamesUseCaseProtocol
     private let getPlayersUseCase: GetPlayersUseCaseProtocol
     private let addPlayerUseCase: AddPlayerUseCaseProtocol
+    private let addMatchUseCase: AddMatchUseCaseProtocol
     private let resolveWinnersUseCase: ResolveWinnersUseCaseProtocol
+    private let onFinish: @MainActor () -> Void
 
     private weak var router: NewMatchRouting?
 
     private var addPlayerTask: Task<Void, Never>?
+    private var saveTask: Task<Void, Never>?
 
     private(set) var games: [Domain.GameModel] = []
     private(set) var selectedGame: Domain.GameModel?
@@ -30,24 +33,29 @@ final class NewMatchViewModel {
     private(set) var scores: [Domain.PlayerModel: [Domain.ScoreableModel: String]] = [:]
     private(set) var pendingGame: Domain.GameModel?
     private(set) var tiedPlayers: [Domain.PlayerModel] = []
-    private(set) var result: NewMatchResult?
+    private(set) var isSaving = false
 
     var date: Date = .now
     var durationMinutes: Int?
     var showsAddPlayerError = false
+    var showsSaveError = false
 
     init(
         getGamesUseCase: GetGamesUseCaseProtocol,
         getPlayersUseCase: GetPlayersUseCaseProtocol,
         addPlayerUseCase: AddPlayerUseCaseProtocol,
+        addMatchUseCase: AddMatchUseCaseProtocol,
         resolveWinnersUseCase: ResolveWinnersUseCaseProtocol,
-        router: NewMatchRouting?
+        router: NewMatchRouting?,
+        onFinish: @escaping @MainActor () -> Void
     ) {
         self.getGamesUseCase = getGamesUseCase
         self.getPlayersUseCase = getPlayersUseCase
         self.addPlayerUseCase = addPlayerUseCase
+        self.addMatchUseCase = addMatchUseCase
         self.resolveWinnersUseCase = resolveWinnersUseCase
         self.router = router
+        self.onFinish = onFinish
     }
 }
 
@@ -68,7 +76,7 @@ extension NewMatchViewModel: NewMatchViewModelProtocol {
     }
 
     var canSave: Bool {
-        selectedGame != nil && participants.count >= Self.minimumPlayers
+        selectedGame != nil && participants.count >= Self.minimumPlayers && !isSaving
     }
 
     func onAppear() async {
@@ -236,25 +244,41 @@ private extension NewMatchViewModel {
 
     func finish(game: Domain.GameModel, winners: Set<Domain.PlayerModel>, isManual: Bool) {
         let participants = participants.enumerated().map { index, player in
-            NewMatchResult.Participant(
+            Domain.NewMatchModel.Participant(
                 player: player,
                 turnOrder: index,
                 scores: Dictionary(uniqueKeysWithValues: game.scoreables.map {
                     ($0, value(for: player, scoreable: $0))
                 }),
-                total: total(for: player),
                 isWinner: winners.contains(player)
             )
         }
 
-        let result = NewMatchResult(
+        let match = Domain.NewMatchModel(
             game: game,
-            date: date,
+            playedAt: date,
             durationMinutes: durationMinutes,
             isWinnerManuallySelected: isManual,
             participants: participants
         )
-        self.result = result
-        router?.newMatchDidFinish()
+        isSaving = true
+        saveTask = Task { [weak self] in
+            await self?.add(match)
+        }
+    }
+
+    func add(_ match: Domain.NewMatchModel) async {
+        defer {
+            isSaving = false
+            saveTask = nil
+        }
+
+        do {
+            try await addMatchUseCase(match)
+            router?.newMatchDidFinish()
+            onFinish()
+        } catch {
+            showsSaveError = true
+        }
     }
 }

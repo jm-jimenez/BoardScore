@@ -25,6 +25,7 @@ protocol NewMatchViewModelProtocol: AnyObject, Observable {
     var durationMinutes: Int? { get set }
     var hasDuration: Bool { get set }
     var showsAddPlayerError: Bool { get set }
+    var showsSaveError: Bool { get set }
 
     func onAppear() async
     func total(for player: Domain.PlayerModel) -> Int

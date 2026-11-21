@@ -16,20 +16,20 @@ struct AppCoordinatorTests {
 
     @Test
     func showNewMatch_ShouldPresentSheet() {
-        sut.showNewMatch()
-        #expect(sut.sheet == .newMatch)
+        sut.showNewMatch {}
+        #expect(sut.sheet == .newMatch {})
     }
 
     @Test
     func closeNewMatch_ShouldDismissSheet() {
-        sut.showNewMatch()
+        sut.showNewMatch {}
         sut.closeNewMatch()
         #expect(sut.sheet == nil)
     }
 
     @Test
     func newMatchDidFinish_ShouldDismissSheet() {
-        sut.showNewMatch()
+        sut.showNewMatch {}
         sut.newMatchDidFinish()
         #expect(sut.sheet == nil)
     }
@@ -38,11 +38,11 @@ struct AppCoordinatorTests {
     func showNewGame_ShouldPresentNestedSheetCarryingTheClosure() {
         var createdGame: Domain.GameModel?
         let azul = Domain.GameModel.mock(name: "Azul")
-        sut.showNewMatch()
+        sut.showNewMatch {}
 
         sut.showNewGame { createdGame = $0 }
 
-        #expect(sut.sheet == .newMatch)
+        #expect(sut.sheet == .newMatch {})
         guard case .newGame(let onCreate) = sut.nestedSheet else {
             Issue.record("Expected .newGame nested sheet, got \(String(describing: sut.nestedSheet))")
             return
@@ -54,29 +54,29 @@ struct AppCoordinatorTests {
 
     @Test
     func newGameDidFinish_ShouldDismissNestedSheet() {
-        sut.showNewMatch()
+        sut.showNewMatch {}
         sut.showNewGame { _ in }
 
         sut.newGameDidFinish()
 
         #expect(sut.nestedSheet == nil)
-        #expect(sut.sheet == .newMatch)
+        #expect(sut.sheet == .newMatch {})
     }
 
     @Test
     func closeNewGame_ShouldDismissNestedSheet() {
-        sut.showNewMatch()
+        sut.showNewMatch {}
         sut.showNewGame { _ in }
 
         sut.closeNewGame()
 
         #expect(sut.nestedSheet == nil)
-        #expect(sut.sheet == .newMatch)
+        #expect(sut.sheet == .newMatch {})
     }
 
     @Test
     func closeNewMatch_ShouldAlsoDismissNestedSheet() {
-        sut.showNewMatch()
+        sut.showNewMatch {}
         sut.showNewGame { _ in }
 
         sut.closeNewMatch()
@@ -91,9 +91,25 @@ struct AppCoordinatorTests {
     }
 
     @Test
+    func showNewMatch_ShouldPresentSheetCarryingTheClosure() {
+        var finishCount = 0
+
+        sut.showNewMatch { finishCount += 1 }
+
+        guard case .newMatch(let onFinish) = sut.sheet else {
+            Issue.record("Expected .newMatch sheet, got \(String(describing: sut.sheet))")
+            return
+        }
+
+        onFinish()
+        #expect(finishCount == 1)
+    }
+
+    @Test
     func makeSheet_ShouldBuildNewMatch() {
-        #expect(String(describing: type(of: sut.makeSheet(.newMatch))).contains("NewMatchView<NewMatchViewModel>"))
-        #expect(AppSheet.newMatch.id == "newMatch")
+        let sheet = AppSheet.newMatch {}
+        #expect(String(describing: type(of: sut.makeSheet(sheet))).contains("NewMatchView<NewMatchViewModel>"))
+        #expect(sheet.id == "newMatch")
     }
 
     @Test
@@ -102,14 +118,14 @@ struct AppCoordinatorTests {
         #expect(String(describing: type(of: sut.makeSheet(sheet))).contains("NewGameView<NewGameViewModel>"))
         #expect(sheet.id == "newGame")
         #expect(sheet == .newGame { _ in })
-        #expect((sheet == .newMatch) == false)
+        #expect((sheet == .newMatch {}) == false)
     }
 
     @Test
     func coordinator_ShouldActAsRouterForEveryFeature() {
         let coordinator: AppCoordinatorProtocol = sut
-        coordinator.showNewMatch()
-        #expect(sut.sheet == .newMatch)
+        coordinator.showNewMatch {}
+        #expect(sut.sheet == .newMatch {})
         coordinator.closeNewMatch()
         #expect(sut.sheet == nil)
     }

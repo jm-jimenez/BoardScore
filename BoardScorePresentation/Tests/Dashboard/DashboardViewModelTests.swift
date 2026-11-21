@@ -88,9 +88,54 @@ struct DashboardViewModelTests {
     }
 
     @Test
+    func onAddGameTapped_WhenMatchFinishes_ShouldReloadKeepingContent() async throws {
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock()] }
+        await sut.onAppear()
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock(), .mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock(), .mock()] }
+        sut.onAddGameTapped()
+
+        router.receivedOnFinish?()
+
+        #expect(sut.state.isContent)
+        try await until { lastGamesCount == 2 }
+        #expect(winnersCount == 2)
+    }
+
+    @Test
+    func onAddGameTapped_WhenMatchFinishesFromEmpty_ShouldShowContent() async throws {
+        await getLastGamesUseCaseMock.setExecutionReturn { [] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [] }
+        await sut.onAppear()
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock()] }
+        sut.onAddGameTapped()
+
+        router.receivedOnFinish?()
+
+        try await until { sut.state.isContent }
+        #expect(lastGamesCount == 1)
+    }
+
+    @Test
     func placeholder_ShouldHaveThreeItemsPerSection() {
         let placeholder = DashboardViewModelState.ContentData.placeholder
         #expect(placeholder.gamesViewData.items.count == 3)
         #expect(placeholder.winnersViewData.items.count == 3)
+    }
+}
+
+private extension DashboardViewModelTests {
+    var lastGamesCount: Int? {
+        guard case .content(let contentData) = sut.state else { return nil }
+
+        return contentData.gamesViewData.items.count
+    }
+
+    var winnersCount: Int? {
+        guard case .content(let contentData) = sut.state else { return nil }
+
+        return contentData.winnersViewData.items.count
     }
 }

@@ -10,10 +10,12 @@ import BoardScorePresentation
 @MainActor
 public final class DashboardRouterMock: DashboardRouting {
     public private(set) var showNewMatchCount = 0
+    public private(set) var receivedOnFinish: (@MainActor () -> Void)?
 
     public init() {}
 
-    public func showNewMatch() {
+    public func showNewMatch(onFinish: @escaping @MainActor () -> Void) {
         showNewMatchCount += 1
+        receivedOnFinish = onFinish
     }
 }

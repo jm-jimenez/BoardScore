@@ -28,8 +28,8 @@ public final class AppCoordinator {
     @ViewBuilder
     func makeSheet(_ sheet: AppSheet) -> some View {
         switch sheet {
-        case .newMatch:
-            NewMatchFactory.build(dependencies: dependencies)
+        case .newMatch(let onFinish):
+            NewMatchFactory.build(dependencies: dependencies, onFinish: onFinish)
         case .newGame(let onCreate):
             NewGameFactory.build(dependencies: dependencies, onCreate: onCreate)
         }
@@ -48,8 +48,8 @@ public final class AppCoordinator {
 extension AppCoordinator: AppCoordinatorProtocol {}
 
 extension AppCoordinator: DashboardRouting {
-    public func showNewMatch() {
-        sheet = .newMatch
+    public func showNewMatch(onFinish: @escaping @MainActor () -> Void) {
+        sheet = .newMatch(onFinish: onFinish)
     }
 }
 
