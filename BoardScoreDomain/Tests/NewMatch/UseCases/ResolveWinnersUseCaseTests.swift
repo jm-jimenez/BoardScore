@@ -10,10 +10,14 @@ import Testing
 @testable import BoardScoreDomain
 
 struct ResolveWinnersUseCaseTests {
-    let sut = ResolveWinnersUseCase()
+    let sut: ResolveWinnersUseCase
     let alice = Domain.PlayerModel(name: "Alice")
     let bob = Domain.PlayerModel(name: "Bob")
     let carol = Domain.PlayerModel(name: "Carol")
+
+    init() {
+        sut = ResolveWinnersUseCase()
+    }
 
     @Test
     func highestScore_ShouldReturnPlayerWithMostPoints() {

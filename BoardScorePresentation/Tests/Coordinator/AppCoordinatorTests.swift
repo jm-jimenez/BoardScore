@@ -150,7 +150,7 @@ struct AppCoordinatorTests {
 
     @Test
     func factories_ShouldBuildGamesAndPlayers() {
-        #expect(GamesFactory.build() is GamesView)
+        #expect(GamesFactory.build(dependencies: DashboardExternalDependenciesTest()) is GamesView<GamesViewModel>)
         #expect(PlayersFactory.build() is PlayersView)
     }
 

@@ -113,6 +113,28 @@
         }
       }
     },
+    "Average score" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntuación media"
+          }
+        }
+      }
+    },
+    "Best win rate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mejor % de victorias"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -164,6 +186,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elige al ganador"
+          }
+        }
+      }
+    },
+    "Couldn't load the statistics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar las estadísticas"
           }
         }
       }
@@ -267,6 +300,17 @@
         }
       }
     },
+    "Games you add when creating a match will show up here" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aquí aparecerán los juegos que añadas al crear una partida"
+          }
+        }
+      }
+    },
     "Highest score" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -289,6 +333,17 @@
         }
       }
     },
+    "Its statistics will show up after the first match" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sus estadísticas aparecerán tras la primera partida"
+          }
+        }
+      }
+    },
     "Last games" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -296,6 +351,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Últimas partidas"
+          }
+        }
+      }
+    },
+    "Longest win streak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mayor racha de victorias"
           }
         }
       }
@@ -318,6 +384,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menú"
+          }
+        }
+      }
+    },
+    "Most losses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más derrotas"
           }
         }
       }
@@ -399,6 +476,28 @@
         }
       }
     },
+    "No games yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no hay juegos"
+          }
+        }
+      }
+    },
+    "Nobody has won yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadie ha ganado todavía"
+          }
+        }
+      }
+    },
     "OK" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -406,6 +505,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aceptar"
+          }
+        }
+      }
+    },
+    "Only played %lld matches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only played %lld match"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Only played %lld matches"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Solo ha jugado %lld partida"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Solo ha jugado %lld partidas"
+                }
+              }
+            }
           }
         }
       }
@@ -498,6 +638,28 @@
         }
       }
     },
+    "Share of matches" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre el total de partidas"
+          }
+        }
+      }
+    },
+    "Statistics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas"
+          }
+        }
+      }
+    },
     "The scores entered will be deleted." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -505,6 +667,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se borrarán las puntuaciones introducidas."
+          }
+        }
+      }
+    },
+    "This game hasn't been played yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no se ha jugado a este juego"
+          }
+        }
+      }
+    },
+    "Times played" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veces jugado"
+          }
+        }
+      }
+    },
+    "Top winner" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Máximo ganador"
           }
         }
       }
@@ -538,6 +733,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ganador"
+          }
+        }
+      }
+    },
+    "Winners" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganadores"
           }
         }
       }

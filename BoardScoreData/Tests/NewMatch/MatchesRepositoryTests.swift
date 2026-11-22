@@ -112,6 +112,71 @@ struct MatchesRepositoryTests {
             ]))
         }
     }
+
+    @Test
+    func getMatches_EmptyStore_ShouldReturnEmpty() async throws {
+        let game = Domain.GameModel(name: "Azul", winCondition: .highestScore, scoreables: [])
+
+        let result = try await sut.getMatches(for: game)
+        #expect(result.isEmpty)
+    }
+
+    @Test
+    func getMatches_ShouldFilterByGameAndSortByDate() async throws {
+        let azul = helper.makeGame("Azul")
+        let catan = helper.makeGame("Catan")
+        let dani = helper.makePlayer("Dani")
+        let older = Date(timeIntervalSince1970: 1_000)
+        let newer = Date(timeIntervalSince1970: 2_000)
+        helper.makeMatch(game: azul, playedAt: newer, results: [.win(dani, [20])])
+        helper.makeMatch(game: catan, playedAt: older, results: [.win(dani, [5])])
+        helper.makeMatch(game: azul, playedAt: older, results: [.loss(dani, [10])])
+        try helper.save()
+
+        let result = try await sut.getMatches(for: domainGame(azul))
+
+        #expect(result.map(\.playedAt) == [older, newer])
+        #expect(result.map { $0.participants.map(\.score) } == [[10], [20]])
+    }
+
+    @Test
+    func getMatches_ShouldSumScoresKeepTurnOrderAndMarkWinners() async throws {
+        let game = helper.makeGame("Wingspan", scoreables: ["Birds", "Eggs"])
+        let mercedes = helper.makePlayer("Mercedes")
+        let dani = helper.makePlayer("Dani")
+        helper.makeMatch(game: game, playedAt: .now, results: [.loss(dani, [30, 5]), .win(mercedes, [40, 12])])
+        try helper.save()
+
+        let result = try await sut.getMatches(for: domainGame(game))
+
+        #expect(result.first?.participants == [
+            Domain.MatchResultModel.Participant(
+                player: Domain.PlayerModel(id: dani.id, name: "Dani"),
+                score: 35,
+                isWinner: false
+            ),
+            Domain.MatchResultModel.Participant(
+                player: Domain.PlayerModel(id: mercedes.id, name: "Mercedes"),
+                score: 52,
+                isWinner: true
+            )
+        ])
+    }
+
+    @Test
+    func getMatches_ShouldIgnoreParticipantsWithoutPlayer() async throws {
+        let game = helper.makeGame("Azul")
+        let dani = helper.makePlayer("Dani")
+        let removed = helper.makePlayer("Removed")
+        helper.makeMatch(game: game, playedAt: .now, results: [.win(removed, [50]), .loss(dani, [10])])
+        try helper.save()
+        helper.context.delete(removed)
+        try helper.save()
+
+        let result = try await sut.getMatches(for: domainGame(game))
+
+        #expect(result.first?.participants.map(\.player.name) == ["Dani"])
+    }
 }
 
 private extension MatchesRepositoryTests {
@@ -164,6 +229,20 @@ private extension MatchesRepositoryTests {
         scores: [Domain.ScoreableModel: Int] = [:],
         isWinner: Bool = false
     ) -> Domain.NewMatchModel.Participant {
-        Domain.NewMatchModel.Participant(player: player, turnOrder: turnOrder, scores: scores, isWinner: isWinner)
+        Domain.NewMatchModel.Participant(
+            player: player,
+            turnOrder: turnOrder,
+            scores: scores,
+            isWinner: isWinner
+        )
+    }
+
+    func domainGame(_ entity: GameEntity) -> Domain.GameModel {
+        Domain.GameModel(
+            id: entity.id,
+            name: entity.name,
+            winCondition: .highestScore,
+            scoreables: []
+        )
     }
 }

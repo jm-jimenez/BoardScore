@@ -13,9 +13,16 @@ public actor DefaultMatchesRepository: ModelActor {
     public nonisolated let modelExecutor: any ModelExecutor
     public nonisolated let modelContainer: ModelContainer
 
+    private let matchMapper: MatchEntityMapperProtocol
+
     public init(modelContainer: ModelContainer) {
+        self.init(modelContainer: modelContainer, matchMapper: MatchEntityMapper())
+    }
+
+    init(modelContainer: ModelContainer, matchMapper: MatchEntityMapperProtocol) {
         self.modelContainer = modelContainer
         self.modelExecutor = DefaultSerialModelExecutor(modelContext: ModelContext(modelContainer))
+        self.matchMapper = matchMapper
     }
 }
 
@@ -57,6 +64,15 @@ extension DefaultMatchesRepository: MatchesRepositoryProtocol {
         }
 
         try modelContext.save()
+    }
+
+    public func getMatches(for game: Domain.GameModel) async throws -> [Domain.MatchResultModel] {
+        let id = game.id
+        let descriptor = FetchDescriptor<MatchEntity>(
+            predicate: #Predicate { $0.game?.id == id },
+            sortBy: [SortDescriptor(\.playedAt)]
+        )
+        return try modelContext.fetch(descriptor).map(matchMapper.map)
     }
 }
 

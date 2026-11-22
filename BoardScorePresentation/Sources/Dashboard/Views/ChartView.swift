@@ -14,13 +14,6 @@ let data = [
 ]
 
 struct ChartView: View {
-    @Environment(\.redactionReasons)
-    private var redactionReasons
-
-    private var isPlaceholder: Bool {
-        redactionReasons.contains(.placeholder)
-    }
-
     var body: some View {
         Chartz(viewData:
                 Chartz.ViewData(
@@ -29,8 +22,6 @@ struct ChartView: View {
                     innerRadius: .ratio(0.6)
                 )
         )
-        .grayscale(isPlaceholder ? 1 : 0)
-        .opacity(isPlaceholder ? 0.3 : 1)
     }
 }
 

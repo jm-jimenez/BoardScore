@@ -29,7 +29,7 @@ public final class AppCoordinator {
         case .dashboard:
             DashboardFactory.build(dependencies: dependencies)
         case .games:
-            GamesFactory.build()
+            GamesFactory.build(dependencies: dependencies)
         case .players:
             PlayersFactory.build()
         }
@@ -105,4 +105,5 @@ extension AppCoordinator: NewGameRouting {
 
 public protocol AppExternalDependencies: DashboardExternalDependencies,
                                          NewMatchExternalDependencies,
-                                         NewGameExternalDependencies {}
+                                         NewGameExternalDependencies,
+                                         GamesExternalDependencies {}
