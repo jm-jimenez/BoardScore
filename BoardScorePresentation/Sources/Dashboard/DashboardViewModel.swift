@@ -8,15 +8,17 @@
 import SwiftUI
 import BoardScoreDomain
 
-protocol DashboardViewModelProtocol: ObservableObject {
+protocol DashboardViewModelProtocol: AnyObject, Observable {
     var state: DashboardViewModelState { get }
-    func onAppear()
+    func onAppear() async
+    func onAddGameTapped()
 }
 
 enum DashboardViewModelState: Equatable {
     case idle
     case loading
     case content(contentData: ContentData)
+    case empty
     case error
 
     var isContent: Bool {
@@ -35,13 +37,15 @@ enum DashboardViewModelState: Equatable {
 @Observable
 @MainActor
 class DashboardViewModel {
-    private var onAppearTask: Task<Void, Never>?
-
     private let getLastGamesUseCase: GetLastGamesUseCaseProtocol
     private let getTopWinnersUseCase: GetTopWinnersUseCaseProtocol
 
     private let lastGamesMapper: LastGamesMapperProtocol
     private let topWinnersMapper: TopWinnersMapperProtocol
+
+    private weak var router: DashboardRouting?
+
+    private var reloadTask: Task<Void, Never>?
 
     var state: DashboardViewModelState = .idle
 
@@ -49,29 +53,41 @@ class DashboardViewModel {
         getLastGamesUseCase: GetLastGamesUseCaseProtocol,
         getTopWinnersUseCase: GetTopWinnersUseCaseProtocol,
         lastGamesMapper: LastGamesMapperProtocol,
-        topWinnersMapper: TopWinnersMapperProtocol
+        topWinnersMapper: TopWinnersMapperProtocol,
+        router: DashboardRouting?
     ) {
         self.getLastGamesUseCase = getLastGamesUseCase
         self.getTopWinnersUseCase = getTopWinnersUseCase
         self.lastGamesMapper = lastGamesMapper
         self.topWinnersMapper = topWinnersMapper
+        self.router = router
     }
 }
 
 extension DashboardViewModel: DashboardViewModelProtocol {
-    func onAppear() {
-        guard onAppearTask == nil else { return }
+    func onAppear() async {
+        await load()
+    }
 
-        onAppearTask = Task { [weak self] in
-            await self?.load()
+    func onAddGameTapped() {
+        router?.showNewMatch { [weak self] in
+            self?.reload()
         }
     }
 }
 
 private extension DashboardViewModel {
+    func reload() {
+        reloadTask = Task { [weak self] in
+            await self?.load()
+            self?.reloadTask = nil
+        }
+    }
+
     func load() async {
-        defer { onAppearTask = nil }
-        state = .loading
+        if !state.isContent {
+            state = .loading
+        }
         let getLastGamesUseCase = getLastGamesUseCase
         let getTopWinnersUseCase = getTopWinnersUseCase
         async let lastGamesResult = getLastGamesUseCase()
@@ -79,6 +95,11 @@ private extension DashboardViewModel {
         do {
             let (games, winners) = try await (lastGamesResult, topWinnersResult)
             guard !Task.isCancelled else { return }
+
+            guard !games.isEmpty else {
+                state = .empty
+                return
+            }
 
             state = .content(
                 contentData: DashboardViewModelState.ContentData(

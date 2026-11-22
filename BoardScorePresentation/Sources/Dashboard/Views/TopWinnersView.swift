@@ -36,8 +36,8 @@ struct TopWinnersView: View {
     var header: some View {
         SectionHeaderView(
             viewData: SectionHeaderView.ViewData(
-                title: "Top winners",
-                info: "Wins / losses"
+                title: "Top winners".localized,
+                info: "Wins / losses".localized
             )
         )
     }

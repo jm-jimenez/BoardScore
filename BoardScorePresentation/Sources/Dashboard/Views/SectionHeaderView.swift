@@ -30,6 +30,7 @@ struct SectionHeaderView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
+        .unredacted()
     }
 }
 

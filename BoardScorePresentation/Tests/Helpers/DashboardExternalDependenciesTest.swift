@@ -9,8 +9,24 @@ import BoardScoreDomain
 import BoardScoreDomainMocks
 @testable import BoardScorePresentation
 
-struct DashboardExternalDependenciesTest: DashboardExternalDependencies {
+struct DashboardExternalDependenciesTest: AppExternalDependencies {
     func resolve() -> DashboardRepositoryProtocol {
         DashboardRepositoryMock()
+    }
+
+    func resolve() -> GamesRepositoryProtocol {
+        GamesRepositoryMock()
+    }
+
+    func resolve() -> PlayersRepositoryProtocol {
+        PlayersRepositoryMock()
+    }
+
+    func resolve() -> MatchesRepositoryProtocol {
+        MatchesRepositoryMock()
+    }
+
+    func resolve() -> AppCoordinatorProtocol? {
+        nil
     }
 }

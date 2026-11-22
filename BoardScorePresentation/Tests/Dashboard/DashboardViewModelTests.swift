@@ -8,12 +8,14 @@
 import Foundation
 import Testing
 import BoardScoreDomainMocks
+import BoardScorePresentationMocks
 @testable import BoardScorePresentation
 
 @MainActor
 struct DashboardViewModelTests {
 
     let sut: DashboardViewModel
+    let router = DashboardRouterMock()
     let getLastGamesUseCaseMock: GetLastGamesUseCaseMock
     let getTopWinnersUseCaseMock: GetTopWinnersUseCaseMock
 
@@ -25,22 +27,21 @@ struct DashboardViewModelTests {
             getLastGamesUseCase: getLastGamesUseCaseMock,
             getTopWinnersUseCase: getTopWinnersUseCaseMock,
             lastGamesMapper: dependencies.resolve(),
-            topWinnersMapper: dependencies.resolve()
+            topWinnersMapper: dependencies.resolve(),
+            router: router
         )
     }
 
     @Test
-    func onAppear_WhenCalled_StateShouldBeCorrect() async throws {
+    func onAppear_WhenCalled_StateShouldBeCorrect() async {
         await getLastGamesUseCaseMock.setExecutionReturn {
             [.mock()]
         }
         await getTopWinnersUseCaseMock.setExecutionReturn {
             [.mock()]
         }
-        sut.onAppear()
-        try await until {
-            sut.state.isContent
-        }
+        await sut.onAppear()
+        #expect(sut.state.isContent)
         guard case .content(let contentData) = sut.state else {
             Issue.record("Expected .content state, got \(sut.state)")
             return
@@ -57,55 +58,84 @@ struct DashboardViewModelTests {
     }
 
     @Test
-    func onAppear_WhenUseCasesThrow_ThenStateShouldBeError() async throws {
+    func onAppear_WhenUseCasesThrow_ThenStateShouldBeError() async {
         struct TestError: Error {}
         await getTopWinnersUseCaseMock.setExecutionReturn {
             throw TestError()
         }
-        sut.onAppear()
-        try await until {
-            if case .error = sut.state {
-                return true
-            } else {
-                return false
-            }
-        }
+        await sut.onAppear()
+        #expect(sut.state == .error)
     }
 
     @Test
-    func onAppear_MultipleCalls_ShouldNotIncrementCount() async throws {
+    func onAppear_WhenNoGames_StateShouldBeEmpty() async {
         await getLastGamesUseCaseMock.setExecutionReturn {
-            try await Task.sleep(nanoseconds: 3_000_000)
-            return [.mock()]
+            []
         }
-        sut.onAppear()
-        sut.onAppear()
-        sut.onAppear()
-        try await until {
-            sut.state.isContent
+        await getTopWinnersUseCaseMock.setExecutionReturn {
+            []
         }
-        let calledCount = await getLastGamesUseCaseMock.calledCount
-        #expect(calledCount == 1)
+        await sut.onAppear()
+        #expect(sut.state == .empty)
+        #expect(sut.state.isContent == false)
+    }
+
+    @Test
+    func onAddGameTapped_ShouldPresentNewMatch() {
+        sut.onAddGameTapped()
+        #expect(router.showNewMatchCount == 1)
+        #expect(sut.state == .idle)
+    }
+
+    @Test
+    func onAddGameTapped_WhenMatchFinishes_ShouldReloadKeepingContent() async throws {
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock()] }
+        await sut.onAppear()
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock(), .mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock(), .mock()] }
+        sut.onAddGameTapped()
+
+        router.receivedOnFinish?()
+
+        #expect(sut.state.isContent)
+        try await until { lastGamesCount == 2 }
+        #expect(winnersCount == 2)
+    }
+
+    @Test
+    func onAddGameTapped_WhenMatchFinishesFromEmpty_ShouldShowContent() async throws {
+        await getLastGamesUseCaseMock.setExecutionReturn { [] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [] }
+        await sut.onAppear()
+        await getLastGamesUseCaseMock.setExecutionReturn { [.mock()] }
+        await getTopWinnersUseCaseMock.setExecutionReturn { [.mock()] }
+        sut.onAddGameTapped()
+
+        router.receivedOnFinish?()
+
+        try await until { sut.state.isContent }
+        #expect(lastGamesCount == 1)
+    }
+
+    @Test
+    func placeholder_ShouldHaveThreeItemsPerSection() {
+        let placeholder = DashboardViewModelState.ContentData.placeholder
+        #expect(placeholder.gamesViewData.items.count == 3)
+        #expect(placeholder.winnersViewData.items.count == 3)
     }
 }
 
-func until(condition: @escaping () -> Bool,
-           timeout: Double = 5,
-           isolation _: isolated (any Actor?) = #isolation,
-           _ file: String = #file,
-           _ line: Int = #line,
-           _ sourceLocation: SourceLocation = #_sourceLocation
-) async throws {
-    enum TestError: Error {
-        case timedOut
+private extension DashboardViewModelTests {
+    var lastGamesCount: Int? {
+        guard case .content(let contentData) = sut.state else { return nil }
+
+        return contentData.gamesViewData.items.count
     }
 
-    let date = Date().advanced(by: timeout)
-    while !condition() {
-        if Date() > date {
-            Issue.record(TestError.timedOut, sourceLocation: sourceLocation)
-            throw TestError.timedOut
-        }
-        await Task.yield()
+    var winnersCount: Int? {
+        guard case .content(let contentData) = sut.state else { return nil }
+
+        return contentData.winnersViewData.items.count
     }
 }
